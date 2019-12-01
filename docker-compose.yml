@@ -1,0 +1,37 @@
+###############################################################################
+#                          Generated on phpdocker.io                          #
+###############################################################################
+version: "3.1"
+
+volumes:
+  # MySQL Data
+  coding-test-sr-mysql-data:
+    driver: local
+
+services:
+
+    mysql:
+      image: mysql:5.7
+      container_name: coding-test-sr-mysql
+      working_dir: /var/lib/mysql
+      volumes:
+        - coding-test-sr-mysql-data:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=ZsQ2vU6tm0
+        - MYSQL_DATABASE=coding-test-sr
+        - MYSQL_USER=system
+        - MYSQL_PASSWORD=3dA5TF9I
+      ports:
+        - "3306:3306"
+
+    app:
+      image: ambientum/php:7.2-nginx
+      container_name: coding-test-sr-webserver
+      working_dir: /var/www/app
+      volumes:
+          - .:/var/www/app
+          - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+        - "80:8080"
+      links:
+        - mysql
