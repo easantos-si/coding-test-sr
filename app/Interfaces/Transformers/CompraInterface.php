@@ -8,5 +8,5 @@ use App\Models\Pedido;
 
 interface CompraInterface
 {
-    public function transform(Pedido $pedido);
+    public function transform(Pedido ...$pedido):void;
 }

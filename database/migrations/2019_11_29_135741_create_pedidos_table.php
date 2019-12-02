@@ -13,18 +13,25 @@ class CreatePedidosTable extends Migration
      */
     public function up()
     {
-        foreach (getLojasMigrateUp() as $lojaMigate)
+
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->loja->base_dados_nome)->create('pedidos', function (Blueprint $table) {
+            Schema::create('pedidos', function (Blueprint $table) {
+                $table->engine = 'innoDB';
                 $table->bigIncrements('id');
-                $table->string('nome_comprador'); //??? Pq nome do comprador... deveria ser cliente_id e no crud buscar o nome via relacionamento pedido_cliente, mas só esta pedindo crud de produto e pedido
-                $table->decimal('valor_frete');
-                $table->integer('status');
+                $table->string('codigo',100);
                 $table->dateTime('data_compra');
+                $table->string('nome_comprador',300);
+                $table->enum('status',config('enums')['status']);
+                $table->decimal('valor_frete');
+
                 $table->timestamps();
+
+                $table->index([DB::raw('codigo(50)')], 'pedidos_codigo_index');
+                $table->index([DB::raw('codigo(50)'),'status'], 'pedidos_codigo_status_index');
+                //$table->index([DB::raw('codigo(50)'), 'data_compra'], 'pedidos_codigo_data_compra_index');
+                //$table->index([DB::raw('codigo(50)'), DB::raw('nome_comprador(10)')], 'pedidos_codigo_nome_comprador_index');
             });
-            //Seria interessante o pedido conter o valor total, para evitar calculos desnecessários em relatórios
-            $lojaMigate->processado = 1;
         }
     }
 
@@ -35,10 +42,9 @@ class CreatePedidosTable extends Migration
      */
     public function down()
     {
-        foreach (getLojasMigrateDown() as $lojaMigate)
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->loja->base_dados_nome)->dropIfExists('pedidos');
-            $lojaMigate->processado = 1;
+            Schema::dropIfExists('pedidos');
         }
     }
 }

@@ -13,19 +13,23 @@ class CreateFuncionariosTable extends Migration
      */
     public function up()
     {
-        foreach (getLojasMigrateUp() as $lojaMigate)
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->loja->base_dados_nome)->create('funcionarios', function (Blueprint $table) {
+            Schema::create('funcionarios', function (Blueprint $table) {
+                $table->engine = 'innoDB';
                 $table->bigIncrements('id');
-                $table->string('nome');
-                $table->string('email')->unique();
+                $table->string('nome',200);
+                $table->string('email',100)->unique();
                 $table->timestamp('email_data_validacao')->nullable();
                 $table->string('senha');
                 $table->boolean('ativo');
                 $table->rememberToken();
                 $table->timestamps();
+
+                $table->index([DB::raw('nome(20)')], 'funcionarios_nome_index');
+                $table->index([DB::raw('email(15)')], 'funcionarios_email_index');
+                $table->index(['ativo'], 'funcionarios_ativo_index');
             });
-            $lojaMigate->processado = 1;
         }
     }
 
@@ -36,10 +40,9 @@ class CreateFuncionariosTable extends Migration
      */
     public function down()
     {
-        foreach (getLojasMigrateDown() as $lojaMigate)
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->loja->base_dados_nome)->dropIfExists('funcionarios');
-            $lojaMigate->processado = 1;
+            Schema::dropIfExists('funcionarios');
         }
     }
 }

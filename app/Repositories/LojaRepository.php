@@ -4,8 +4,8 @@
 namespace App\Repositories;
 
 use App\Factories\LojaTransformerFactory;
-use App\Interfaces\Transformers\LojaInterface;
 use App\Models\Loja;
+use App\Transformers\RetornoTipos\RetornoTipoGetTransformer;
 
 class LojaRepository
 {
@@ -19,10 +19,14 @@ class LojaRepository
         $this->lojaTransformer = LojaTransformerFactory::getInstance( currentVersionApi());
     }
 
-    public function getTodasLojas()
+    public function lojas()
     {
-        $this->lojaTransformer->transform($this->loja);
-
-        return $this->lojaTransformer->retorno();
+        $this->lojaTransformer->transform(...$this->loja->all()->flatten(1)->values()->all());
+        return $this->lojaTransformer->retorno(new RetornoTipoGetTransformer());
+    }
+    public function loja(int $id)
+    {
+        $this->lojaTransformer->transform($this->loja->find($id));
+        return $this->lojaTransformer->retorno(new RetornoTipoGetTransformer());
     }
 }

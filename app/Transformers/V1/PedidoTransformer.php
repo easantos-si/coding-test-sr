@@ -11,10 +11,21 @@ use App\Transformers\RetornoTransformer;
 class PedidoTransformer extends RetornoTransformer implements PedidoInterface
 {
 
-    public function transform(Pedido $pedido): array
+    public function __construct()
     {
-        $this->data = [
+        $this->apiVersion = 1;
+    }
 
-        ];
+    public function transform(Pedido ...$pedidos):void
+    {
+        $retorno = array();
+
+        foreach ($pedidos as $pedido)
+        {
+            $retorno[] = [
+
+            ];
+        }
+        $this->setData($retorno);
     }
 }

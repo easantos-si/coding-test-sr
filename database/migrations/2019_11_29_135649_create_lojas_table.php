@@ -13,15 +13,23 @@ class CreateLojasTable extends Migration
      */
     public function up()
     {
-        Schema::create('lojas', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('nome')->unique();
-            $table->string('senha');
-            $table->string('base_dados_nome')->unique();
-            $table->boolean('ativo');
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        if(isDatabaseDefault())
+        {
+            Schema::create('lojas', function (Blueprint $table) {
+                $table->engine = 'innoDB';
+                $table->bigIncrements('id');
+                $table->string('nome', 100)->unique();
+                $table->string('senha', 60);
+                $table->string('base_dados_nome', 60)->unique();
+                $table->boolean('ativo');
+                $table->rememberToken();
+                $table->timestamps();
+
+                $table->index([DB::raw('nome(10)')], 'lojas_nome_index');
+                $table->index([DB::raw('base_dados_nome(15)')], 'lojas_base_dados_nome_index');
+                $table->index(['ativo'], 'lojas_ativo_index');
+            });
+        }
     }
 
     /**
@@ -31,6 +39,9 @@ class CreateLojasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lojas');
+        if(isDatabaseDefault())
+        {
+            Schema::dropIfExists('lojas');
+        }
     }
 }

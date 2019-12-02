@@ -8,5 +8,5 @@ use App\Models\PedidoItem;
 
 interface PedidoItemInterface
 {
-    public function transform(PedidoItem $pedidoItem);
+    public function transform(PedidoItem ...$pedidoItem):void;
 }

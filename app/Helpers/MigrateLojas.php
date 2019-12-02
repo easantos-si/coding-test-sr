@@ -24,6 +24,7 @@ function getLojasMigrateUp()
     {
 
     }
+
     return $lojasAtualizacao;
 }
 
@@ -39,4 +40,14 @@ function getLojasMigrateDown()
 
     }
     return $lojasAtualizacao;
+}
+
+function getConnectionNameDefault():string
+{
+    return 'mysql';
+}
+
+function isDatabaseDefault():bool
+{
+    return (config('database')['connections'][getConnectionNameDefault()]['database'] == \Illuminate\Support\Facades\DB::connection()->getConfig()['database']);
 }

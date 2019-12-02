@@ -13,18 +13,22 @@ class CreateProdutosTable extends Migration
      */
     public function up()
     {
-        foreach (getLojasMigrateUp() as $lojaMigate)
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->loja->base_dados_nome)->create('produtos', function (Blueprint $table) {
+            Schema::create('produtos', function (Blueprint $table) {
+                $table->engine = 'innoDB';
                 $table->bigIncrements('id');
-                $table->string('nome');
-                $table->string('descricao')->nullable();
-                $table->integer('quantidade')->default(0);
+                $table->string('codigo',100);
+                $table->string('nome',200);
+                $table->string('descricao',500)->nullable();
+                $table->integer('quantidade_estoque')->default(0);
                 $table->decimal('preco');
                 $table->json('atributos');
                 $table->timestamps();
+
+                $table->index([DB::raw('codigo(50)')], 'produtos_codigo_index');
+                $table->index([DB::raw('codigo(50)'),'quantidade_estoque'], 'produtos_codigo_quantidade_estoque_index');
             });
-            $lojaMigate->processado = 1;
         }
     }
 
@@ -35,10 +39,9 @@ class CreateProdutosTable extends Migration
      */
     public function down()
     {
-        foreach (getLojasMigrateDown() as $lojaMigate)
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->base_dados_nome)->dropIfExists('produtos');
-            $lojaMigate->processado = 1;
+            Schema::dropIfExists('produtos');
         }
     }
 }

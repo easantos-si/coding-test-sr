@@ -11,10 +11,26 @@ use App\Transformers\RetornoTransformer;
 class ProdutoTransformer extends RetornoTransformer implements ProdutoInterface
 {
 
-    public function transform(Produto $produto): array
+    public function __construct()
     {
-        $this->data = [
+        $this->apiVersion = 1;
+    }
 
-        ];
+    public function transform(Produto ...$produtos):void
+    {
+        $retorno = array();
+
+        foreach ($produtos as $produto)
+        {
+            $retorno[] = [
+                'codigo' => $produto->codigo,
+                'nome' => $produto->nome,
+                'descricao' => $produto->descricao,
+                'preco' => $produto->preco,
+                'quantidade_estoque' => $produto->quantidade_estoque,
+                'atributos' => $produto->atributos,
+            ];
+        }
+        $this->setData($retorno);
     }
 }

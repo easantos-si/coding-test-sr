@@ -13,16 +13,19 @@ class CreatePedidoItemsTable extends Migration
      */
     public function up()
     {
-        foreach (getLojasMigrateUp() as $lojaMigate)
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->loja->base_dados_nome)->create('pedido_items', function (Blueprint $table) {
+            Schema::create('pedido_items', function (Blueprint $table) {
+                $table->engine = 'innoDB';
                 $table->bigIncrements('id');
-                $table->bigInteger( 'produto_id');
+                $table->bigInteger( 'pedido_id')->unsigned();
+                $table->bigInteger( 'produto_id')->unsigned();
                 $table->integer('quantidade');
                 $table->decimal('preco');
                 $table->timestamps();
+
+                $table->index(['produto_id','quantidade'], 'pedido_items_index');
             });
-            $lojaMigate->processado = 1;
         }
     }
 // lista de itens do pedido (produto, quantidade e preço);
@@ -33,10 +36,9 @@ class CreatePedidoItemsTable extends Migration
      */
     public function down()
     {
-        foreach (getLojasMigrateDown() as $lojaMigate)
+        if(!isDatabaseDefault())
         {
-            Schema::connection($lojaMigate->loja->base_dados_nome)->dropIfExists('pedido_items');
-            $lojaMigate->processado = 1;
+            Schema::dropIfExists('pedido_items');
         }
     }
 }

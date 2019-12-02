@@ -10,10 +10,21 @@ use App\Transformers\RetornoTransformer;
 class FuncionarioTransformer extends RetornoTransformer implements FuncionarioInterface
 {
 
-    public function transform(Funcionario $funcionario): array
+    public function __construct()
     {
-        $this->data = [
+        $this->apiVersion = 1;
+    }
 
-        ];
+    public function transform(Funcionario ...$funcionarios):void
+    {
+        $retorno = array();
+
+        foreach ($funcionarios as $funcionario)
+        {
+            $retorno[] = [
+
+            ];
+        }
+        $this->setData($retorno);
     }
 }

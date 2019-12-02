@@ -9,6 +9,11 @@ class LojaController extends Controller
 
     public function index(LojaRepository $lojaRepository)
     {
-        return $lojaRepository->getTodasLojas();
+        return $lojaRepository->lojas();
+    }
+
+    public function show(LojaRepository $lojaRepository, int $id)
+    {
+        return $lojaRepository->loja($id);
     }
 }

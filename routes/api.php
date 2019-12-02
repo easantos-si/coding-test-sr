@@ -13,4 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/v{versao}/loja', 'LojaController@index');
+Route::group(['name'=>'v1'], function()
+{
+    Route::apiResource('/v1/lojas','LojaController');
+    Route::apiResource('/v1/{LojaId}/produtos', 'ProdutoController');
+});
+//Teste versão
+//Route::group(['name'=>'v2'], function()
+//{
+//    Route::get('/v2/lojas', 'LojaController@todas');
+//    Route::get('/v2/lojas/{id}', 'LojaController@loja');
+//});

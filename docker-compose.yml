@@ -5,20 +5,20 @@ version: "3.1"
 
 volumes:
   # MySQL Data
-  coding-test-sr-mysql-data:
+  coding_test_sr_mysql_data:
     driver: local
 
 services:
 
     mysql:
       image: mysql:5.7
-      container_name: coding-test-sr-mysql
+      container_name: coding_test_sr_mysql
       working_dir: /var/lib/mysql
       volumes:
-        - coding-test-sr-mysql-data:/var/lib/mysql
+        - coding_test_sr_mysql_data:/var/lib/mysql
       environment:
         - MYSQL_ROOT_PASSWORD=ZsQ2vU6tm0
-        - MYSQL_DATABASE=coding-test-sr
+        - MYSQL_DATABASE=coding_test_sr
         - MYSQL_USER=system
         - MYSQL_PASSWORD=3dA5TF9I
       ports:
@@ -26,7 +26,7 @@ services:
 
     app:
       image: ambientum/php:7.2-nginx
-      container_name: coding-test-sr-webserver
+      container_name: coding_test_sr_webserver
       working_dir: /var/www/app
       volumes:
           - .:/var/www/app
