@@ -8,5 +8,5 @@ use App\Models\Produto;
 
 interface ProdutoInterface
 {
-    public function transform(Produto ...$produto):void;
+    public function transform(Produto ...$produtos):void;
 }

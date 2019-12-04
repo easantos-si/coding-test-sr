@@ -6,5 +6,8 @@ return [
         '1' => 'pago',
         '2' => 'entregue',
         '3' => 'cancelado',
+    ],
+    'pedidoTelacionamento' => [
+        'PedidoItem' => 'PedidoItems',
     ]
 ];

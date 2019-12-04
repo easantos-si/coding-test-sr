@@ -28,4 +28,11 @@ class Funcionario extends Model implements AuthenticatableContract, Authorizable
         'created_ar' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        $this->connection = currentLojaBaseDados();
+
+        parent::__construct($attributes);
+    }
 }

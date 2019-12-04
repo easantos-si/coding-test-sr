@@ -4,13 +4,8 @@
 namespace App\Repositories;
 
 use App\Factories\ProdutoTransformerFactory;
-use App\Models\Pedido;
+use App\Interfaces\Transformers\RetornoTiposInterface;
 use App\Models\Produto;
-use App\Transformers\RetornoTipos\RetornoTipoDeleteTransformer;
-use App\Transformers\RetornoTipos\RetornoTipoGetTransformer;
-use App\Transformers\RetornoTipos\RetornoTipoPostTransformer;
-use App\Transformers\RetornoTipos\RetornoTipoPutTransformer;
-use Illuminate\Http\Request;
 
 class ProdutoRepository
 {
@@ -18,43 +13,58 @@ class ProdutoRepository
     private $produtoTransformer;
 
     public function __construct(Produto $produto)
-    {//, int $lojaId
+    {
         $this->produto = $produto;
-        //$this->produto->setConnection( getLojaBaseDados(1));
         $this->produtoTransformer = ProdutoTransformerFactory::getInstance( currentVersionApi());
     }
 
-    public function produtos()
+    public function produtos():iterable
     {
-        $this->produtoTransformer->transform(...$this->produto->all()->flatten(1)->values()->all());
-        return $this->produtoTransformer->retorno(new RetornoTipoGetTransformer());
+        return $this->produto->all()
+            ->flatten(1)
+            ->values()->all();
     }
 
-    public function produto(int $codigo)
+    public function produto(string $codigo):Produto
     {
-        $this->produtoTransformer->transform($this->produto->whereCodigo($codigo)->first());
-        return $this->produtoTransformer->retorno(new RetornoTipoGetTransformer());
+        return $this->produto
+            ->whereCodigo($codigo)->first();
     }
 
-    public function criar(Request $request)
+    public function criar(array $parametros):Produto
     {
-        $this->produtoTransformer->transform($this->produto->create($request->all()));
-        return $this->produtoTransformer->retorno(new RetornoTipoPostTransformer());
+        return $this->produto
+            ->create($parametros);
     }
 
-    public function atualizar(int $codigo, Request $request)
+    public function atualizar(Produto $produto, array $parametros):Produto
     {
-        $produto = $this->produto->whereCodigo($codigo)->first();
-        $produto->update($request->all());
-        $this->produtoTransformer->transform($produto);
-        return $this->produtoTransformer->retorno(new RetornoTipoPutTransformer());
+        $produto->update($parametros);
+        return $produto;
     }
-
-    public function deletar(int $codigo)
+    public function deletar(Produto $produto):Produto
     {
-        $produto = $this->produto->whereCodigo($codigo)->first();
         $produto->delete();
-        $this->produtoTransformer->transform($produto );
-        return $this->produtoTransformer->retorno(new RetornoTipoDeleteTransformer());
+        return $produto;
+    }
+
+    public function extrairProdutoArray(array $parametros):Produto
+    {
+        return $this->produto($parametros['produto']);
+    }
+
+    public function transformer(Produto $produto):void
+    {
+        $this->produtoTransformer->transform($produto);
+    }
+
+    public function transformers(Produto... $produtos):void
+    {
+        $this->produtoTransformer->transform(...$produtos);
+    }
+
+    public function retorno(RetornoTiposInterface $retornoTipo)
+    {
+        return $this->produtoTransformer->retorno($retornoTipo);
     }
 }

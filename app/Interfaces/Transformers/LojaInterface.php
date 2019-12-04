@@ -8,5 +8,5 @@ use App\Models\Loja;
 
 interface LojaInterface
 {
-    public function transform(Loja ...$loja):void;
+    public function transform(Loja ...$lojas):void;
 }

@@ -22,7 +22,7 @@ class CreateFuncionariosTable extends Migration
                 $table->string('email',100)->unique();
                 $table->timestamp('email_data_validacao')->nullable();
                 $table->string('senha');
-                $table->boolean('ativo');
+                $table->boolean('ativo')->default(1);
                 $table->rememberToken();
                 $table->timestamps();
 

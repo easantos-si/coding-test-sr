@@ -35,10 +35,7 @@ class AddForeignKeyToPedidoItemsTable extends Migration
             Schema::table('pedido_items', function (Blueprint $table)
             {
                 $table->dropForeign('pedido_items_pedido_id_to_pedido_foreign');
-                $table->dropIndex('pedido_items_pedido_id_to_pedido_foreign');
-
                 $table->dropForeign('pedido_items_produto_id_to_produto_foreign');
-                $table->dropIndex('pedido_items_produto_id_to_produto_foreign');
             });
         }
     }

@@ -19,7 +19,7 @@ class CreatePedidosTable extends Migration
             Schema::create('pedidos', function (Blueprint $table) {
                 $table->engine = 'innoDB';
                 $table->bigIncrements('id');
-                $table->string('codigo',100);
+                $table->string('codigo',100)->unique();
                 $table->dateTime('data_compra');
                 $table->string('nome_comprador',300);
                 $table->enum('status',config('enums')['status']);
@@ -29,8 +29,6 @@ class CreatePedidosTable extends Migration
 
                 $table->index([DB::raw('codigo(50)')], 'pedidos_codigo_index');
                 $table->index([DB::raw('codigo(50)'),'status'], 'pedidos_codigo_status_index');
-                //$table->index([DB::raw('codigo(50)'), 'data_compra'], 'pedidos_codigo_data_compra_index');
-                //$table->index([DB::raw('codigo(50)'), DB::raw('nome_comprador(10)')], 'pedidos_codigo_nome_comprador_index');
             });
         }
     }

@@ -20,11 +20,14 @@ class CreatePedidoItemsTable extends Migration
                 $table->bigIncrements('id');
                 $table->bigInteger( 'pedido_id')->unsigned();
                 $table->bigInteger( 'produto_id')->unsigned();
-                $table->integer('quantidade');
-                $table->decimal('preco');
+                $table->string( 'produto',100);
+                $table->integer('quantidade')->default(0);
+                $table->decimal('preco')->default(0);
                 $table->timestamps();
 
-                $table->index(['produto_id','quantidade'], 'pedido_items_index');
+                $table->index([DB::raw('produto(50)')], 'pedido_items_produto_index');
+                $table->index(['produto_id','quantidade'], 'pedido_items_produto_id_quantidade_index');
+                $table->index([DB::raw('produto(50)'),'quantidade'], 'pedido_items_produto_quantidade_index');
             });
         }
     }

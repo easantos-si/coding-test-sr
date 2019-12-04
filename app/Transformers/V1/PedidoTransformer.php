@@ -23,7 +23,12 @@ class PedidoTransformer extends RetornoTransformer implements PedidoInterface
         foreach ($pedidos as $pedido)
         {
             $retorno[] = [
-
+                'codigo' => $pedido->codigo,
+                'data_compra' => $pedido->data_compra,
+                'nome_comprador' => $pedido->nome_comprador,
+                'status' => $pedido->status,
+                'valor_frete' => $pedido->valor_frete,
+                'lista_itens_pedido' => $pedido->lista_itens_pedido
             ];
         }
         $this->setData($retorno);

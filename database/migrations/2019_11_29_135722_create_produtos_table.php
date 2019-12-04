@@ -18,11 +18,11 @@ class CreateProdutosTable extends Migration
             Schema::create('produtos', function (Blueprint $table) {
                 $table->engine = 'innoDB';
                 $table->bigIncrements('id');
-                $table->string('codigo',100);
+                $table->string('codigo',100)->unique();
                 $table->string('nome',200);
                 $table->string('descricao',500)->nullable();
                 $table->integer('quantidade_estoque')->default(0);
-                $table->decimal('preco');
+                $table->decimal('preco')->default(0);
                 $table->json('atributos');
                 $table->timestamps();
 

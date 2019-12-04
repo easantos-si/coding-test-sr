@@ -3,32 +3,56 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\ProdutoRepository;
+use App\Transformers\RetornoTipos\RetornoTipoDeleteTransformer;
+use App\Transformers\RetornoTipos\RetornoTipoGetTransformer;
+use App\Transformers\RetornoTipos\RetornoTipoPostTransformer;
+use App\Transformers\RetornoTipos\RetornoTipoPutTransformer;
 use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
 {
     public function index(ProdutoRepository $produtoRepository, int $lojaId)
     {
-        return $produtoRepository->produtos();
+        $produtoRepository->transformers(...
+            $produtoRepository->produtos()
+        );
+        return $produtoRepository->retorno(new RetornoTipoGetTransformer());
     }
 
-    public function show(ProdutoRepository $produtoRepository, int $lojaId, int $codigo)
+    public function show(ProdutoRepository $produtoRepository, int $lojaId, string $codigo)
     {
-        return $produtoRepository->produto($codigo);
+        $produtoRepository->transformer(
+            $produtoRepository->produto($codigo)
+        );
+        return $produtoRepository->retorno(new RetornoTipoGetTransformer());
     }
 
     public function store(ProdutoRepository $produtoRepository,Request $request)
     {
-        return $produtoRepository->criar($request);
+        $produtoRepository->transformer(
+            $produtoRepository->criar($request->all())
+        );
+        return $produtoRepository->retorno(new RetornoTipoPostTransformer());
     }
 
-    public function update(ProdutoRepository $produtoRepository, int $lojaId, int $codigo, Request $request)
+    public function update(ProdutoRepository $produtoRepository, int $lojaId, string $codigo, Request $request)
     {
-        return $produtoRepository->atualizar($codigo, $request);
+        $produtoRepository->transformer(
+            $produtoRepository->atualizar(
+                $produtoRepository->produto(
+                    $codigo),
+                $request->all()
+            )
+        );
+        return $produtoRepository->retorno(new RetornoTipoPutTransformer);
     }
 
-    public function destroy(ProdutoRepository $produtoRepository,int $lojaId, int $codigo)
+    public function destroy(ProdutoRepository $produtoRepository,int $lojaId, string $codigo)
     {
-        return $produtoRepository->deletar($codigo);
+        $produtoRepository->transformer(
+            $produtoRepository->deletar(
+                $produtoRepository->produto($codigo))
+        );
+        return $produtoRepository->retorno(new RetornoTipoDeleteTransformer());
     }
 }

@@ -12,7 +12,16 @@ class Produto extends Model
         'descricao',
         'quantidade_estoque',
         'preco',
-        'atributos'
+        'atributos',
+    ];
+
+    protected $casts = [
+        'atributos' => 'json',
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
     ];
 
     protected $connection;
