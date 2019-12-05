@@ -2,37 +2,47 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Auth\MustVerifyEmail;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\Access\Authorizable;
 
-class Funcionario extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+
+class Funcionario extends Model
 {
-    use Authenticatable, Authorizable, CanResetPassword, MustVerifyEmail;
+
+    private $loja;
 
     protected $fillable = [
-        'nome', 'email', 'senha',
+        'name',
+        'email',
+        'email_verified_at',
+        'password',
+        'ativo',
+        'remember_token',
     ];
 
     protected $hidden = [
-        'senha', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
-        'email_data_validacao' => 'datetime',
+        'email_verified_at' => 'datetime',
         'created_ar' => 'datetime',
         'updated_at' => 'datetime',
     ];
 
-    public function __construct(array $attributes = [])
-    {
-        $this->connection = currentLojaBaseDados();
+//    public function __construct(array $attributes = [])
+//    {
+//        $this->connection = currentLojaBaseDados();
+//
+//        parent::__construct($attributes);
+//    }
 
-        parent::__construct($attributes);
+    public function setLoja(Loja $loja):void
+    {
+        $this->loja = $loja;
+    }
+    public function getLoja():Loja
+    {
+        return $this->loja;
     }
 }

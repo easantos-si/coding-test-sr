@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use App\Repositories\ProdutoRepository;
 use App\Transformers\RetornoTipos\RetornoTipoDeleteTransformer;
 use App\Transformers\RetornoTipos\RetornoTipoGetTransformer;
@@ -11,7 +12,7 @@ use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
 {
-    public function index(ProdutoRepository $produtoRepository, int $lojaId)
+    public function index(ProdutoRepository $produtoRepository)
     {
         $produtoRepository->transformers(...
             $produtoRepository->produtos()
@@ -19,7 +20,7 @@ class ProdutoController extends Controller
         return $produtoRepository->retorno(new RetornoTipoGetTransformer());
     }
 
-    public function show(ProdutoRepository $produtoRepository, int $lojaId, string $codigo)
+    public function show(ProdutoRepository $produtoRepository, string $codigo)
     {
         $produtoRepository->transformer(
             $produtoRepository->produto($codigo)
@@ -27,7 +28,7 @@ class ProdutoController extends Controller
         return $produtoRepository->retorno(new RetornoTipoGetTransformer());
     }
 
-    public function store(ProdutoRepository $produtoRepository,Request $request)
+    public function store(ProdutoRepository $produtoRepository, Request $request)
     {
         $produtoRepository->transformer(
             $produtoRepository->criar($request->all())
@@ -35,7 +36,7 @@ class ProdutoController extends Controller
         return $produtoRepository->retorno(new RetornoTipoPostTransformer());
     }
 
-    public function update(ProdutoRepository $produtoRepository, int $lojaId, string $codigo, Request $request)
+    public function update(ProdutoRepository $produtoRepository, string $codigo, Request $request)
     {
         $produtoRepository->transformer(
             $produtoRepository->atualizar(
@@ -47,7 +48,7 @@ class ProdutoController extends Controller
         return $produtoRepository->retorno(new RetornoTipoPutTransformer);
     }
 
-    public function destroy(ProdutoRepository $produtoRepository,int $lojaId, string $codigo)
+    public function destroy(ProdutoRepository $produtoRepository, string $codigo)
     {
         $produtoRepository->transformer(
             $produtoRepository->deletar(

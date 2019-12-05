@@ -9,31 +9,32 @@ use App\Models\Produto;
 
 class ProdutoRepository
 {
-    private $produto;
+    private $dataAuthRepository;
     private $produtoTransformer;
 
-    public function __construct(Produto $produto)
+    public function __construct(DataAuthRepository $dataAuthRepository)
     {
-        $this->produto = $produto;
         $this->produtoTransformer = ProdutoTransformerFactory::getInstance( currentVersionApi());
+        $this->dataAuthRepository = $dataAuthRepository;
+        $this->dataAuthRepository->newConnection();
     }
 
     public function produtos():iterable
     {
-        return $this->produto->all()
+        return Produto::on($this->dataAuthRepository->database())->get()
             ->flatten(1)
             ->values()->all();
     }
 
     public function produto(string $codigo):Produto
     {
-        return $this->produto
+        return Produto::on($this->dataAuthRepository->database())
             ->whereCodigo($codigo)->first();
     }
 
     public function criar(array $parametros):Produto
     {
-        return $this->produto
+        return Produto::on($this->dataAuthRepository->database())
             ->create($parametros);
     }
 

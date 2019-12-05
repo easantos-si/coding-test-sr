@@ -12,15 +12,26 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login/{passaport}', 'Security\AuthController@authenticate');
+    Route::post('login-refresh', 'Security\AuthController@refreshToken');
+    Route::get('me', 'Security\AuthController@getAuthenticatedUser');
+    Route::post('refresh', 'Security\AuthController@refresh');
+    Route::post('me', 'Security\AuthController@me');
+
+});
+
 Route::group(['name'=>'v1'], function()
 {
     Route::apiResource('/v1/lojas','LojaController');
-    Route::apiResource('/v1/{lojaId}/produtos', 'ProdutoController');
-    Route::apiResource('/v1/{lojaId}/pedidos', 'PedidoController');
-    Route::apiResource('/v1/{lojaId}/pedido/{pedido}/itens', 'PedidoItemController');
+    Route::apiResource('/v1/produtos', 'ProdutoController');
+    Route::apiResource('/v1/pedidos', 'PedidoController');
+    Route::apiResource('/v1/pedido/{pedido}/produtos', 'PedidoItemController');
 });
-//Teste versão
-//Route::group(['name'=>'v2'], function()
-//{
-//    Route::apiResource('/v2/lojas','LojaController');
-//});
+

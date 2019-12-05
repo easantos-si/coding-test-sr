@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'auth_entity',
     ],
 
     /*
@@ -38,12 +38,12 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'auth_entity',
         ],
 
         'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
+            'driver' => 'jwt',
+            'provider' => 'auth_entity',
             'hash' => false,
         ],
     ],
@@ -66,15 +66,30 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'auth_entity' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Http\Controllers\Security\AuthEntity::class,
         ],
 
-         'users' => [
-             'driver' => 'database',
-             'table' => 'users',
-         ],
+//        'loja' => [
+//            'driver' => 'eloquent',
+//            'model' => App\Models\Loja::class,
+//        ],
+
+
+//        'users' => [
+//            'driver' => 'eloquent',
+//            'model' => App\User::class,
+//        ],
+
+//        'funcionarios' => [
+//            'driver' => 'database',
+//            'table' => 'funcionarios',
+//        ],
+//         'users' => [
+//             'driver' => 'database',
+//             'table' => 'users',
+//         ],
     ],
 
     /*
@@ -93,9 +108,9 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => 'password_resets',
+        'auth_entity' => [
+            'provider' => 'auth_entity',
+            'table' => 'senhas_historico',
             'expire' => 60,
             'throttle' => 60,
         ],

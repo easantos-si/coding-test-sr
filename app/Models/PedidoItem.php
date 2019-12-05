@@ -22,13 +22,6 @@ class PedidoItem extends Model implements PedidoItemToPedidoRelationshipInterfac
     ];
     protected $connection;
 
-    public function __construct(array $attributes = [])
-    {
-        $this->connection = currentLojaBaseDados();
-
-        parent::__construct($attributes);
-    }
-
     public function pedido():HasOne
     {
         return $this->hasOne(Pedido::class);

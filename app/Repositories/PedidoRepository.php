@@ -6,29 +6,25 @@ namespace App\Repositories;
 use App\Factories\PedidoTransformerFactory;
 use App\Interfaces\Transformers\RetornoTiposInterface;
 use App\Models\Pedido;
+use App\Services\CriarItensPeloPedidoService;
+use App\Services\DeletarItensPeloPedidoService;
 use Illuminate\Support\Facades\DB;
 
 class PedidoRepository
 {
-    private $pedido;
+    private $dataAuthRepository;
     private $pedidoTransformer;
-    private $pedidoItemRepository;
 
-    public function __construct(PedidoItemRepository $pedidoItemRepository, Pedido $pedido)
+    public function __construct(DataAuthRepository $dataAuthRepository)
     {
-        $this->pedidoItemRepository  = $pedidoItemRepository;
-        $this->pedido = $pedido;
+        $this->dataAuthRepository = $dataAuthRepository;
+        $this->dataAuthRepository->newConnection();
         $this->pedidoTransformer = PedidoTransformerFactory::getInstance( currentVersionApi());
-    }
-
-    private function extrairListaPedidoArray(array $parametros):array
-    {
-        return $parametros['lista_itens_pedido'] ?? array();
     }
 
     public function pedidos():iterable
     {
-        return $this->pedido->all()
+        return Pedido::on($this->dataAuthRepository->database())->get()
             ->flatten(1)
             ->values()
             ->all();
@@ -36,7 +32,7 @@ class PedidoRepository
 
     public function pedido(string $codigo):Pedido
     {
-        return $this->pedido->whereCodigo($codigo)
+        return Pedido::on($this->dataAuthRepository->database())->whereCodigo($codigo)
             ->first();
     }
 
@@ -46,15 +42,25 @@ class PedidoRepository
         DB::beginTransaction();
         try
         {
-            $pedido = $this->pedido->create($parametros);
+            $pedido = Pedido::on($this->dataAuthRepository->database())->create($parametros);
 
-            $this->pedidoItemRepository->criarPeloPedido(
+            $criarItensPedidosPeloPedido = new CriarItensPeloPedidoService(
                 $pedido,
-                $this->extrairListaPedidoArray($parametros)
-            );
+                new PedidoItemRepository(
+                    $this->dataAuthRepository,
+                    new ProdutoRepository(
+                        $this->dataAuthRepository)
+                ),
+                $parametros);
+            $criarItensPedidosPeloPedido->criar();
+
             DB::commit();
         }
         catch (ModelNotFoundException $ex)
+        {
+            DB::rollBack();
+        }
+        catch (FatalThrowableError $ex)
         {
             DB::rollBack();
         }
@@ -63,23 +69,38 @@ class PedidoRepository
 
     public function atualizar(Pedido $pedido, array $parametros):Pedido
     {
-        $codigoAnterior = $pedido->codigo;
-
-        $pedido->update($parametros);
-
-        if($pedido->codigo != $codigoAnterior)
+        try
         {
-            $pedido->atualizarCodigoPedidoItems($codigoAnterior,$pedido->codigo);
+            $codigoAnterior = $pedido->codigo;
+
+            $pedido->update($parametros);
+
+            if($pedido->codigo != $codigoAnterior)
+            {
+                $pedido->atualizarCodigoPedidoItems($codigoAnterior,$pedido->codigo);
+            }
+            DB::commit();
+        }
+        catch (ModelNotFoundException $ex)
+        {
+            DB::rollBack();
         }
 
         return $pedido;
     }
     public function deletar(Pedido $pedido):Pedido
     {
-        $pedido->deletarTodosPedidoItems();
-
-        $pedido->delete();
-
+        try
+        {
+            $deletarItensPeloPedido = new DeletarItensPeloPedidoService($pedido);
+            $deletarItensPeloPedido->deletar();
+            $pedido->delete();
+            DB::commit();
+        }
+        catch (ModelNotFoundException $ex)
+        {
+            DB::rollBack();
+        }
         return $pedido;
     }
 

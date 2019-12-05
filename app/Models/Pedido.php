@@ -22,43 +22,34 @@ class Pedido extends Model implements PedidoToPedidoItemRelationshipInterface
         'data_compra',
     ];
 
-    protected $connection;
-
-    public function __construct(array $attributes = [])
-    {
-        $this->connection = currentLojaBaseDados();
-
-        parent::__construct($attributes);
-    }
-
     public function pedidoItem():HasMany
     {
         return $this->hasMany(PedidoItem::class,'pedido_id');
     }
 
-    public function scopePedidoItems($query)
+    public function scopePedidoProdutos($query)
     {
         return $query->with('pedidoItem');
     }
 
-    public function atualizarCodigoPedidoItems(string $antigo, string $novo):void
+    public function scopePedidoProduto($query, string $codigoProduto)
     {
-        foreach ( $this->with(['pedidoItem' => function($query) use($antigo)
-            {
-               $query->where('pedido',$antigo);
-            }]
-        )->first()->pedidoItem as $item)
-        {
-            $item->codigo = $novo;
-            $item->update();
-        }
+        $query->with(['pedidoItem' =>function($query) use($codigoProduto){
+            $query->where('produto', '=', $codigoProduto);
+        }]);
     }
 
-    public function deletarTodosPedidoItems():void
+    public function atualizarCodigoPedidoItems(string $antigo, string $novo):void
     {
-        foreach ( $this->pedidoItems()->first()->pedidoItem as $item)
+        $itensPedido = $this->pedidoItems()->first()->pedidoItem;
+
+        if($itensPedido)
         {
-            $item->delete();
+            foreach ($itensPedido->where('codigo', antigo) as $item)
+            {
+                $item->codigo = $novo;
+                $item->update();
+            }
         }
     }
 }

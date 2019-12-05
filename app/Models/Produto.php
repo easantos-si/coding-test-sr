@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Repositories\DataAuthRepository;
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Produto extends Model
@@ -23,13 +26,4 @@ class Produto extends Model
         'created_at',
         'updated_at',
     ];
-
-    protected $connection;
-
-    public function __construct(array $attributes = [])
-    {
-        $this->connection = currentLojaBaseDados();
-
-        parent::__construct($attributes);
-    }
 }

@@ -13,18 +13,16 @@ use App\Models\Produto;
 class PedidoItemRepository
 {
 
-    private $pedido;
-    private $pedidoItem;
+    private $dataAuthRepository;
     private $pedidoItemTransformer;
     private $produtoRepository;
 
-    public function __construct(Pedido $pedido,ProdutoRepository $produtoRepository, PedidoItem $pedidoItem)
+    public function __construct(DataAuthRepository $dataAuthRepository, ProdutoRepository $produtoRepository)
     {
-        $this->pedido = $pedido;
+        $this->dataAuthRepository = $dataAuthRepository;
+        $this->dataAuthRepository->newConnection();
         $this->pedidoItemTransformer = pedidoItemTransformerFactory::getInstance( currentVersionApi());
         $this->produtoRepository = $produtoRepository;
-        $this->pedidoItem = $pedidoItem;
-
     }
 
     private function extrairPedidoItemLista(array $parametros):array
@@ -47,29 +45,26 @@ class PedidoItemRepository
         );
     }
 
-    public function pedidoItens(string $codigo):Pedido
+    public function pedidoItens(Pedido $pedido):Pedido
     {
-        return $this->pedido->pedidoItems()->whereCodigo($codigo)->first();
+        return $pedido->pedidoProdutos()->get()->first();
     }
 
-    public function pedidoItem(string $codigo, string $produto):Pedido
+    public function pedidoItem(Pedido $pedido, string $codigoProduto):Pedido
     {
-        return $this->pedido->with(['pedidoItem' => function($query) use($produto)
-            {
-                $query->where('produto', $produto);
-            }]
-        )->whereCodigo($codigo)->first();
+        return $pedido->pedidoProduto($codigoProduto)->get()->first();
     }
 
     public function criar(Pedido $pedido, array $parametros):Pedido
     {
-        $this->pedidoItem->create(
+        $pedido->pedidoItem[] = PedidoItem::on($this->dataAuthRepository->database())->create(
             $this->montarPedidoItem(
                 $pedido,
                 $this->produtoRepository->extrairProdutoArray($parametros),
                 $this->extrairPedidoItemLista($parametros)
             )
         );
+
         return $pedido;
     }
 
@@ -79,6 +74,7 @@ class PedidoItemRepository
         {
             $this->criar($pedido,  $listaItemPedido);
         }
+
         return $pedido;
     }
 
@@ -107,46 +103,4 @@ class PedidoItemRepository
     {
         return $this->pedidoItemTransformer->retorno($retornoTipo);
     }
-
-//    public function pedidoItemsTransformer(string $pedido):array
-//    {
-//        $this->pedidoItemTransformer->transform(self::getPedido($pedido));
-//        return $this->pedidoItemTransformer->retorno(new RetornoTipoGetTransformer());
-//    }
-//
-//    public function pedidoItemTransformer(string $pedido, string $produto):array
-//    {
-//        $this->pedidoItemTransformer->transform(self::getPedido($pedido, $produto));
-//        return $this->pedidoItemTransformer->retorno(new RetornoTipoGetTransformer());
-//    }
-//
-//    public function criarTransformer(Request $request):array
-//    {
-//        $pedido = self::getPedido($request->get('pedido'));
-//        $pedidoItemDados = [
-//            'pedido_id' => $pedido->id,
-//            'produto_id' => Produto::whereCodigo($request->get('produto'))->first()->id,
-//            'produto' => $request->get('produto'),
-//            'quantidade' => $request->get('quantidade'),
-//            'preco' => $request->get('preco'),
-//        ];
-//        $this->pedidoItemTransformer->transform($this->pedidoItem->create($pedidoItemDados));
-//        return $this->pedidoItemTransformer->retorno(new RetornoTipoPostTransformer());
-//    }
-//
-//    public function atualizarTransformer(string $pedido, string $produto, Request $request):array
-//    {
-//        $pedidoItem = self::getPedido($pedido)->pedidoItems->where('produto',$produto)->first();
-//        $pedidoItem->update($request->all());
-//        $this->pedidoItemTransformer->transform($pedidoItem);
-//        return $this->pedidoItemTransformer->retorno(new RetornoTipoPutTransformer());
-//    }
-//
-//    public function deletarTransformer(string $pedido, string $produto):array
-//    {
-//        $pedidoItem = self::getPedido($pedido)->pedidoItems->where('produto',$produto)->first();
-//        $pedidoItem->delete();
-//        $this->pedidoItemTransformer->transform($pedidoItem );
-//        return $this->pedidoItemTransformer->retorno(new RetornoTipoDeleteTransformer());
-//    }
 }

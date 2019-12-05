@@ -16,7 +16,15 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton('Lojas', function()
         {
-            return Loja::all();
+            $lojas = Loja::all();
+
+            foreach ($lojas as $loja)
+            {
+                $baseDados = config("database.connections.mysql");
+                $baseDados['database'] = $loja->base_dados_nome;
+                config(["database.connections.{$loja->base_dados_nome}" => $baseDados]);
+            }
+            return $lojas;
         });
     }
 

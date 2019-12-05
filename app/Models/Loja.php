@@ -16,11 +16,20 @@ class Loja extends Model implements AuthenticatableContract, AuthorizableContrac
     use Authenticatable, Authorizable, CanResetPassword, MustVerifyEmail;
 
     protected $fillable = [
-        'nome', 'senha',
+        'name',
+        'password',
+        'base_dados_nome',
+        'ativo',
+        'remember_token',
+        'passport',
+        'hash_loja',
     ];
 
     protected $hidden = [
-        'senha', 'remember_token',
+        'password',
+        'remember_token',
+        'passport',
+        'hash_loja',
     ];
 
     protected $casts = [
