@@ -4,22 +4,20 @@
 namespace App\Transformers;
 
 
-use App\Interfaces\Transformers\RetornoErroInterface;
-use App\Interfaces\ApiVersionInterface;
-use App\Interfaces\Transformers\RetornoTiposErroInterface;
 use App\Interfaces\Transformers\RetornoTiposInterface;
 
-abstract class  RetornoErroTransformer implements RetornoErroInterface, ApiVersionInterface
+abstract class  RetornoErroTransformer extends RetornoTransformer
 {
+    protected $data;
     protected $apiVersion;
 
-    public function retorno(RetornoTiposErroInterface $retornoTipoErro):array
+    public function retorno(RetornoTiposInterface $retornoTipoErro):array
     {
         return [
-            'data' => array(),
+            'data' => $this->data,
             'status' => $retornoTipoErro->getStatus(),
+            'success' => false,
             'message' => $retornoTipoErro->getMessage(),
-            'error' => $retornoTipoErro->getErro(),
             'api-version' => $this->apiVersion,
         ];
     }

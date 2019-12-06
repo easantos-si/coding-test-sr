@@ -10,7 +10,6 @@ use App\Transformers\RetornoTransformer;
 
 class PedidoTransformer extends RetornoTransformer implements PedidoInterface
 {
-
     public function __construct()
     {
         $this->apiVersion = 1;

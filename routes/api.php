@@ -16,7 +16,6 @@ Route::group([
 
     'middleware' => 'api',
     'prefix' => 'auth'
-
 ], function ($router) {
     Route::post('login/{passaport}/admin', 'Security\AuthController@authenticate');
     Route::post('login/{passaport}', 'Security\AuthController@authenticate');
@@ -27,12 +26,18 @@ Route::group([
 });
 
 Route::group([
-    'name'=>'v1'
+    'name'=>'v1',
+    'middleware' => 'jwt.verify',
+    'prefix' => 'v1'
 ], function()
 {
-    Route::apiResource('/v1/lojas','LojaController');
-    Route::apiResource('/v1/produtos', 'ProdutoController');
-    Route::apiResource('/v1/pedidos', 'PedidoController');
-    Route::apiResource('/v1/pedido/{pedido}/produtos', 'PedidoItemController');
+    Route::apiResource('lojas','LojaController');
+    Route::apiResource('produtos', 'ProdutoController');
+    Route::apiResource('pedidos', 'PedidoController');
+    Route::apiResource('pedido/{pedido}/produtos', 'PedidoItemController');
+
+//Implementar no controler no final
+//    Route::post('/v1/compas/pedidos', 'PedidoController@compas');
+//    Route::post('/v1/compas/pedidos/{pedido}', 'PedidoController@compa');
 });
 

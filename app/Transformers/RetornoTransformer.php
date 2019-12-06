@@ -13,12 +13,12 @@ abstract class RetornoTransformer implements RetornoInterface, ApiVersionInterfa
     protected $data;
     protected $apiVersion;
 
-
     public function retorno(RetornoTiposInterface $retornoTipo):array
     {
         return [
             'data' => $this->data,
             'status' => $retornoTipo->getStatus(),
+            'success' => true,
             'message' => $retornoTipo->getMessage(),
             'api-version' => $this->apiVersion,
         ];

@@ -10,7 +10,6 @@ use App\Transformers\RetornoTransformer;
 
 class ProdutoTransformer extends RetornoTransformer implements ProdutoInterface
 {
-
     public function __construct()
     {
         $this->apiVersion = 1;

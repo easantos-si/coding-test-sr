@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Transformers\RetornoTipos;
+namespace App\Transformers\RetornoTipoAuth;
 
 
 use App\Interfaces\Transformers\RetornoTiposInterface;
 
-class RetornoTipoPutTransformer implements RetornoTiposInterface
+class RetornoTipoAuthRefreshTokenTransformer implements RetornoTiposInterface
 {
     public function getStatus(): int
     {
@@ -15,6 +15,6 @@ class RetornoTipoPutTransformer implements RetornoTiposInterface
 
     public function getMessage(): string
     {
-        return 'Cadastro atualizado com sucesso';
+        return 'Autenticado - refresh efetuado com sucesso.';
     }
 }

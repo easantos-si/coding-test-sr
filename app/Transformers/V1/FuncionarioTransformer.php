@@ -9,7 +9,6 @@ use App\Transformers\RetornoTransformer;
 
 class FuncionarioTransformer extends RetornoTransformer implements FuncionarioInterface
 {
-
     public function __construct()
     {
         $this->apiVersion = 1;
