@@ -54,11 +54,11 @@ class CriarLoja extends Command
                 $loja = Loja::create(
                     [
                         'name' => $this->argument('nome'),
-                        'password' => bcrypt(md5($this->argument('senha'))),
+                        'password' => $this->getHashMascaraPasswordBancoDados($this->argument('senha')),
                         'base_dados_nome' => $this->argument('nome-base'),
                         'ativo' => $this->argument('ativo'),
                         'remember_token' => Str::random(10),
-                        'passport' => Str::random(10),
+                        'passaport' => Str::random(10),
                     ]
                 );
 

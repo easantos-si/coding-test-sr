@@ -18,16 +18,17 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-
+    Route::post('login/{passaport}/admin', 'Security\AuthController@authenticate');
     Route::post('login/{passaport}', 'Security\AuthController@authenticate');
     Route::post('login-refresh', 'Security\AuthController@refreshToken');
     Route::get('me', 'Security\AuthController@getAuthenticatedUser');
     Route::post('refresh', 'Security\AuthController@refresh');
-    Route::post('me', 'Security\AuthController@me');
-
+    Route::post('logout', 'Security\AuthController@logoutToken');
 });
 
-Route::group(['name'=>'v1'], function()
+Route::group([
+    'name'=>'v1'
+], function()
 {
     Route::apiResource('/v1/lojas','LojaController');
     Route::apiResource('/v1/produtos', 'ProdutoController');

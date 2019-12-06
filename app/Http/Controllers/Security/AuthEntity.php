@@ -6,44 +6,54 @@ namespace App\Http\Controllers\Security;
 use App\Functions\Security\HashValidator;
 use App\Services\CreateConnectionsLojaService;
 use Illuminate\Auth\MustVerifyEmail;
-use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class AuthEntity extends Authenticatable implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, JWTSubject
+class AuthEntity extends Authenticatable implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
-    use  Authorizable, CanResetPassword, MustVerifyEmail;
+    use  Authorizable,  MustVerifyEmail;
 
     use HashValidator;
 
     private $loja;
+
+    private $admin;
 
     protected $table = 'lojas';
 
     protected $connection;
 
     protected $hidden = [
+        'id',
         'password',
         'remember_token',
-        'passport',
+        'passaport',
         'hash_loja',
+        'base_dados_nome',
+        'created_at',
+        'updated_at',
     ];
 
     public function __construct(array $attributes = [])
     {
-
         $passaport = currentPassaport();
+        $this->admin = $passaport['admin'];
 
-        if(strlen($passaport) > 0)
+        if(strlen($passaport['key']) > 0)
         {
-            $this->loja = $this->isValidHashLoja($passaport);
+            $this->loja = $this->isValidHashLoja($passaport['key']);
 
-            if($this->loja)
+            if(!$this->loja)
             {
+                throw new Tymon\JWTAuth\Exceptions\TokenInvalidException();
+            }
+
+            if(!$this->admin)
+            {
+                $this->connection = $this->loja->base_dados_nome;
                 $connectionLoja = new CreateConnectionsLojaService($this->loja->base_dados_nome);
                 $connectionLoja->newConnection();
                 $this->table = 'funcionarios';
@@ -65,9 +75,11 @@ class AuthEntity extends Authenticatable implements AuthenticatableContract, Aut
             'loja_id' => $this->loja->id,
             'loja_nome' => $this->loja->name,
             'loja_ativo' => $this->loja->ativo,
-            'passport' => $this->loja->passport,
+            'passaport' => $this->loja->passaport,
             'database' => $this->loja->base_dados_nome,
             'table' => $this->table,
+            'user_id' => $this->id,
+            'user_name' => $this->name,
         ];
     }
 

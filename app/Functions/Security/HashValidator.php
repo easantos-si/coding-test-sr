@@ -4,16 +4,16 @@ namespace App\Functions\Security;
 
 trait HashValidator
 {
-    public function isValidHashLoja(string $passport):\App\Models\Loja
+    public function isValidHashLoja(string $passaport):\App\Models\Loja
     {
-        $loja = app()->make('Lojas')->where('passport', $passport)->first();
+        $loja = app()->make('Lojas')->where('passaport', $passaport)->first();
 
         if(!$loja)
         {
             return null;
         }
 
-        if(!password_verify(md5("{$loja->id}-{$passport}"), $loja->hash_loja))
+        if(!password_verify(md5("{$loja->id}-{$passaport}"), $loja->hash_loja))
         {
             return null;
         }

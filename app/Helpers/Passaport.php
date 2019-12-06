@@ -1,13 +1,17 @@
 <?php
-function currentPassaport():string
+function currentPassaport():array
 {
-    $passaport = '';
+    $passaport = [
+        'key'=> '',
+        'admin'=> false,
+    ];
 
     if(isset($_SERVER['REQUEST_URI'])){
-        preg_match('`login\/([^/]*?)(\/)?$`', $_SERVER['REQUEST_URI'], $matches);
+        preg_match('`login/([^/]*)/?(.*)/?$`', $_SERVER['REQUEST_URI'], $matches);
         if($matches)
         {
-            $passaport = $matches[1];
+            $passaport['key'] = $matches[1];
+            $passaport['admin'] = (strtolower( $matches[2]) == 'admin');
         }
     }
     return $passaport;

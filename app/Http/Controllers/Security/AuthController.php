@@ -20,7 +20,7 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         // grab credentials from the request
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('passaport','email', 'password');
         $credentials['password'] = $this->getHashMascaraPasswordLogin($credentials['password']);
 
         try
@@ -40,34 +40,10 @@ class AuthController extends Controller
         return response()->json(compact('token'));
     }
 
-    public function getAuthenticatedUser()
+    public function getAuthenticatedUser(\Tymon\JWTAuth\JWTAuth $auth)
     {
-        try
-        {
-            if (! $user = JWTAuth::parseToken()->authenticate())
-            {
-                return response()->json(['user_not_found'], 404);
-            }
-
-        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e)
-        {
-
-            return response()->json(['token_expired'], $e->getStatusCode());
-
-        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e)
-        {
-
-            return response()->json(['token_invalid'], $e->getStatusCode());
-
-        } catch (Tymon\JWTAuth\Exceptions\JWTException $e)
-        {
-
-            return response()->json(['token_absent'], $e->getStatusCode());
-
-        }
-
-        // the token is valid and we have found the user via the sub claim
-        return response()->json(compact('user'));
+        return $auth->parseToken()->getPayload()->toArray();
+//        return response()->json(compact());
     }
 
     public function refreshToken()
@@ -87,5 +63,23 @@ class AuthController extends Controller
         }
 
         return response()->json(compact('token'));
+    }
+
+    public function logoutToken()
+    {
+        if (!$token = JWTAuth::getToken()) {
+            return response()->json(['error', 'token_not_send'], 401);
+        }
+
+        try
+        {
+            $token = JWTAuth::invalidate($token);
+        }
+        catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e)
+        {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }
+
+        return response()->json('logout sucess');
     }
 }

@@ -70,26 +70,6 @@ return [
             'driver' => 'eloquent',
             'model' => App\Http\Controllers\Security\AuthEntity::class,
         ],
-
-//        'loja' => [
-//            'driver' => 'eloquent',
-//            'model' => App\Models\Loja::class,
-//        ],
-
-
-//        'users' => [
-//            'driver' => 'eloquent',
-//            'model' => App\User::class,
-//        ],
-
-//        'funcionarios' => [
-//            'driver' => 'database',
-//            'table' => 'funcionarios',
-//        ],
-//         'users' => [
-//             'driver' => 'database',
-//             'table' => 'users',
-//         ],
     ],
 
     /*
@@ -107,14 +87,14 @@ return [
     |
     */
 
-    'passwords' => [
-        'auth_entity' => [
-            'provider' => 'auth_entity',
-            'table' => 'senhas_historico',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-    ],
+//    'passwords' => [
+//        'auth_entity' => [
+//            'provider' => 'auth_entity',
+//            'table' => 'senhas_historico',
+//            'expire' => 60,
+//            'throttle' => 60,
+//        ],
+//    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -36,9 +36,9 @@ class DataAuthRepository extends CreateConnectionsLojaService implements DataAut
         return $this->getData('loja_ativo');
     }
 
-    public function passport(): string
+    public function passaport(): string
     {
-        return $this->getData('passport');
+        return $this->getData('passaport');
     }
 
     public function database(): string

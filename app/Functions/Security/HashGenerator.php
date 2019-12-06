@@ -8,7 +8,7 @@ trait HashGenerator
 {
     public function getHashLoja(Loja $loja):string
     {
-        return bcrypt(md5("{$loja->id}-{$loja->passport}"));
+        return bcrypt(md5("{$loja->id}-{$loja->passaport}"));
     }
 
     public function getHashMascaraPasswordLogin(string $password):string

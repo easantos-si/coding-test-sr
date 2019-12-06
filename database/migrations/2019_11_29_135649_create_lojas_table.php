@@ -23,7 +23,7 @@ class CreateLojasTable extends Migration
                 $table->string('base_dados_nome', 60)->unique();
                 $table->boolean('ativo');
                 $table->rememberToken();
-                $table->string('passport', 10)->unique();
+                $table->string('passaport', 10)->unique();
                 $table->string('hash_loja', 60)->nullable()->unique();
                 $table->timestamps();
 
