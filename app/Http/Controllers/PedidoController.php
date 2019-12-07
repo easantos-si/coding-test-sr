@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\PedidosValidateRepository;
 use App\Repositories\PedidoRepository;
 use App\Transformers\RetornoTipos\RetornoTipoDeleteTransformer;
 use App\Transformers\RetornoTipos\RetornoTipoGetTransformer;
 use App\Transformers\RetornoTipos\RetornoTipoPostTransformer;
 use App\Transformers\RetornoTipos\RetornoTipoPutTransformer;
+use App\Transformers\RetornoTiposErrors\RetornoTipoErroUnprocessableEntityTransformer;
 use Illuminate\Http\Request;
 
 class PedidoController extends Controller
@@ -28,8 +30,14 @@ class PedidoController extends Controller
         return $pedidoRepository->retorno(new RetornoTipoGetTransformer());
     }
 
-    public function store(PedidoRepository $pedidoRepository, Request $request)
+    public function store(PedidoRepository $pedidoRepository, PedidosValidateRepository $pedidosValidateRepository, Request $request)
     {
+
+        if(!$pedidosValidateRepository->validarPedido($request->all()))
+        {
+            return $pedidosValidateRepository->retorno(new RetornoTipoErroUnprocessableEntityTransformer);
+        }
+
         $pedidoRepository->transformer(
             $pedidoRepository->criar($request->all())
         );

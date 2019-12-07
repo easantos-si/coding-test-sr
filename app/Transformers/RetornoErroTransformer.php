@@ -5,25 +5,36 @@ namespace App\Transformers;
 
 
 use App\Interfaces\Transformers\RetornoTiposInterface;
+use App\Interfaces\Transformers\ValidacaoParametrosErrosInterface;
+
 
 abstract class  RetornoErroTransformer extends RetornoTransformer
 {
     protected $data;
+    protected $errors;
     protected $apiVersion;
 
-    public function retorno(RetornoTiposInterface $retornoTipoErro):array
+    public function retorno(RetornoTiposInterface $retornoTipoError):array
     {
+        $retorno = $this->data;
+
+        $retorno[] = [
+            'errors'=>$this->errors
+        ];
+
         return [
-            'data' => $this->data,
-            'status' => $retornoTipoErro->getStatus(),
-            'success' => false,
-            'message' => $retornoTipoErro->getMessage(),
-            'api-version' => $this->apiVersion,
+            'data' => $retorno,
+            'status' => $retornoTipoError->getStatus(),
+            'message' => $retornoTipoError->getMessage(),
         ];
     }
 
-    public function getVersion():int
+    public function adicionarErros(ValidacaoParametrosErrosInterface $validacaoParametrosErros):void
     {
-        return $this->apiVersion;
+        $this->errors[] = [
+            'code' => $validacaoParametrosErros->getCodigoErro(),
+            'description' => $validacaoParametrosErros->getDescricaoErro(),
+            'type' => $validacaoParametrosErros->getCategoriaErro(),
+        ];
     }
 }

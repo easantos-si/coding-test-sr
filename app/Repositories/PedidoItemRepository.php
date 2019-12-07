@@ -25,15 +25,15 @@ class PedidoItemRepository
         $this->produtoRepository = $produtoRepository;
     }
 
-    private function extrairPedidoItemLista(array $parametros):array
+    public function extrairPedidoItemListaCadastro(array $listaItemPedidoCadastro):array
     {
         return [
-            'quantidade' => $parametros['quantidade'],
-            'preco' => $parametros['preco'],
+            'quantidade' => $listaItemPedidoCadastro['quantidade'],
+            'preco' => $listaItemPedidoCadastro['preco'],
         ];
     }
 
-    private function montarPedidoItem(Pedido $pedido, Produto $produto, array $itemPedidoDados):array
+    public function montarPedidoItem(Pedido $pedido, Produto $produto, array $itemPedidoDados):array
     {
         return array_merge(
             [
@@ -55,32 +55,32 @@ class PedidoItemRepository
         return $pedido->pedidoProduto($codigoProduto)->get()->first();
     }
 
-    public function criar(Pedido $pedido, array $parametros):Pedido
+    public function criar(Pedido $pedido, array $listaItemPedidoCadastro):Pedido
     {
         $pedido->pedidoItem[] = PedidoItem::on($this->dataAuthRepository->database())->create(
             $this->montarPedidoItem(
                 $pedido,
-                $this->produtoRepository->extrairProdutoArray($parametros),
-                $this->extrairPedidoItemLista($parametros)
+                $this->produtoRepository->extrairProdutoItemListaCadastro($listaItemPedidoCadastro),
+                $this->extrairPedidoItemListaCadastro($listaItemPedidoCadastro)
             )
         );
 
         return $pedido;
     }
 
-    public function criarPeloPedido(Pedido $pedido, array $listaItensPedido):Pedido
+    public function criarPeloPedido(Pedido $pedido, array $listaItensPedidoCadastro):Pedido
     {
-        foreach ($listaItensPedido as $listaItemPedido)
+        foreach ($listaItensPedidoCadastro as $listaItemPedidoCadastro)
         {
-            $this->criar($pedido,  $listaItemPedido);
+            $this->criar($pedido,  $listaItemPedidoCadastro);
         }
 
         return $pedido;
     }
 
-    public function atualizar(Pedido $pedido, array $parametros):Pedido
+    public function atualizar(Pedido $pedido, array $listaItemPedidoCadastro):Pedido
     {
-        $pedido->pedidoItem->first()->update($parametros);
+        $pedido->pedidoItem->first()->update($listaItemPedidoCadastro);
         return $pedido;
     }
     public function deletar(Pedido $pedido):Pedido

@@ -4,6 +4,7 @@
 namespace App\Repositories;
 
 use App\Factories\PedidoTransformerFactory;
+use App\Functions\PedidoItems\PedidoItensExtracaoDadosListaPedidos;
 use App\Interfaces\Transformers\RetornoTiposInterface;
 use App\Models\Pedido;
 use App\Services\CriarItensPeloPedidoService;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 
 class PedidoRepository
 {
+    use PedidoItensExtracaoDadosListaPedidos;
+
     private $dataAuthRepository;
     private $pedidoTransformer;
 

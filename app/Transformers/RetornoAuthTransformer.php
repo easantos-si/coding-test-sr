@@ -6,7 +6,7 @@ namespace App\Transformers;
 
 use App\Interfaces\Transformers\RetornoTiposInterface;
 
-class RetornoAuthTransformer extends RetornoTransformer
+abstract class RetornoAuthTransformer extends RetornoTransformer
 {
     protected $data;
     protected $apiVersion;
@@ -19,10 +19,5 @@ class RetornoAuthTransformer extends RetornoTransformer
             'success' => ($retornoTipoAuth->getStatus() == 200),
             'message' => $retornoTipoAuth->getMessage(),
         ];
-    }
-
-    public function getVersion():int
-    {
-        return $this->apiVersion;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Repositories;
 use App\Factories\ProdutoTransformerFactory;
 use App\Interfaces\Transformers\RetornoTiposInterface;
 use App\Models\Produto;
+use function foo\func;
 
 class ProdutoRepository
 {
@@ -49,9 +50,75 @@ class ProdutoRepository
         return $produto;
     }
 
-    public function extrairProdutoArray(array $parametros):Produto
+    public function todosProdutosExiste(array $codigoProdutos):bool
     {
-        return $this->produto($parametros['produto']);
+        return  (Produto::on($this->dataAuthRepository->database())
+            ->whereIn('codigo',$codigoProdutos)
+            ->count() == count($codigoProdutos));
+    }
+
+    public function todosProdutosExisteDisponibilidadeEstoque(array $codigoProdutosQuantidades):bool
+    {
+        $query = Produto::on($this->dataAuthRepository->database());
+        foreach ($codigoProdutosQuantidades as  $codigoProduto => $quantidade)
+        {
+            $query->orWhere('codigo', '=', $codigoProduto)->where('quantidade_estoque','>','0')->where('quantidade_estoque', '<=',$quantidade);
+        }
+        dd($query->count());
+        return (Produto::on($this->dataAuthRepository->database())
+            ->where($codigoProdutosQuantidades)
+            ->count() == count($codigoProdutosQuantidades));
+
+
+        //$codigoProcutos = array_keys($codigoProdutosQuantidades);
+
+
+//
+//        return (Produto::on($this->dataAuthRepository->database())
+//                ->whereIn('codigo',$codigoProcutos)
+//            ->where(function($query) use ($codigoProdutosQuantidades){
+//                foreach ($codigoProdutosQuantidades as  $codigoProduto => $quantidade)
+//                {
+//                    $query->where('codigo',$codigoProduto)->where('quantidade',$quantidade);
+//                }
+//            })->count() == count($codigoProcutos));
+    }
+
+    public function extrairProdutoItemListaCadastro(array $listaItemPedidoCadastro):Produto
+    {
+        return $this->produto($listaItemPedidoCadastro['produto']);
+    }
+
+    public function extrairCodigoProdutoListaItemPedidoCadastro(array $listaItemPedidoCadastro):string
+    {
+        return $listaItemPedidoCadastro['produto'];
+    }
+
+    public function extrairCodigoProdutoQuantidadeListaItemPedidoCadastro(array $listaItemPedidoCadastro):array
+    {
+        return [
+                    $listaItemPedidoCadastro['produto'] =>  $listaItemPedidoCadastro['quantidade']
+        ];
+    }
+
+    public function extrairCodigoProdutosListaItensPedidoCadastro(array $listaItensPedidoCadastro):array
+    {
+        $codigoPedidos = array();
+        foreach ($listaItensPedidoCadastro as $listaItemPedidoCadastro)
+        {
+            $codigoPedidos[] = $this->extrairCodigoProdutoListaItemPedidoCadastro($listaItemPedidoCadastro);
+        }
+        return $codigoPedidos;
+    }
+
+    public function extrairCodigoProdutosQuantidadeListaItensPedidoCadastro(array $listaItensPedidoCadastro):array
+    {
+        $codigoPedidos = array();
+        foreach ($listaItensPedidoCadastro as $listaItemPedidoCadastro)
+        {
+            $codigoPedidos[] = $this->extrairCodigoProdutoQuantidadeListaItemPedidoCadastro($listaItemPedidoCadastro);
+        }
+        return $codigoPedidos;
     }
 
     public function transformer(Produto $produto):void

@@ -4,12 +4,13 @@
 namespace App\Services;
 
 use App\Functions\PedidoItems\PedidoItemsExtracaoDados;
+use App\Functions\PedidoItems\PedidoItensExtracaoDadosListaPedidos;
 use App\Models\Pedido;
 use App\Repositories\PedidoItemRepository;
 
 class CriarItensPeloPedidoService
 {
-    use PedidoItemsExtracaoDados;
+    use PedidoItemsExtracaoDados, PedidoItensExtracaoDadosListaPedidos;
 
     private $pedidoItemRepository;
     private $parametros;
@@ -25,14 +26,9 @@ class CriarItensPeloPedidoService
     {
         $this->pedidoItemRepository->criarPeloPedido(
             $this->pedido,
-            $this->extrairListaPedidoArray($this->parametros)
+            $this->extrairListaItensPedidoCadastro($this->parametros)
         );
 
         $this->anexarListaItensPedido();
     }
-    public function extrairListaPedidoArray(array $parametros):array
-    {
-        return $parametros['lista_itens_pedido'] ?? array();
-    }
-
 }

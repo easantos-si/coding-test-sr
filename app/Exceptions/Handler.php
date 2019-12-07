@@ -68,9 +68,16 @@ class Handler extends ExceptionHandler
 
         $authRepository->transformer(
             [
-                'error' => $exception->getStatusCode(),
-                'message' => $exception->getMessage(),
+                'error' => $exception->getCode(),
             ]);
+
+        if(config('app.debug') == true) {
+            $authRepository->transformer(
+                [
+                    'error' => $exception->getCode(),
+                    'message' => $exception->getMessage(),
+                ]);
+        }
 
         if($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
         {
