@@ -83,43 +83,44 @@ class Handler extends ExceptionHandler
         {
             if($request->expectsJson())
             {
-                return response()->json($authRepository->retorno(new RetornoTipoErroNotFoundTransformer()));
+                return $authRepository->retorno(new RetornoTipoErroNotFoundTransformer());
             }
         }
         if($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
         {
             if($request->expectsJson())
             {
-                return response()->json($authRepository->retorno(new RetornoTipoErroNotAuthorizedTransformer()));
+                return $authRepository->retorno(new RetornoTipoErroNotAuthorizedTransformer());
             }
         }
 
         if ($exception instanceof Tymon\JWTAuth\Exceptions\TokenExpiredException)
         {
-            return response()->json($authRepository->retorno(new RetornoTipoAuthTokenExpiredTransform()));
+            return $authRepository->retorno(new RetornoTipoAuthTokenExpiredTransform());
         }
 
         if ($exception instanceof Tymon\JWTAuth\Exceptions\TokenInvalidException)
         {
-            return response()->json($authRepository->retorno(new RetornoTipoAuthTokenInvalidTransformer()));
+            return $authRepository->retorno(new RetornoTipoAuthTokenInvalidTransformer());
         }
 
         if ($exception instanceof UnauthorizedHttpException) {
             if ($exception->getPrevious() instanceof TokenExpiredException) {
-                return response()->json($authRepository->retorno(new RetornoTipoAuthTokenExpiredTransform()));
+                return $authRepository->retorno(new RetornoTipoAuthTokenExpiredTransform());
             } else if ($exception->getPrevious() instanceof TokenInvalidException) {
-                return response()->json($authRepository->retorno(new RetornoTipoAuthTokenInvalidTransformer()));
+                return $authRepository->retorno(new RetornoTipoAuthTokenInvalidTransformer());
             } else if ($exception->getPrevious() instanceof TokenBlacklistedException) {
-                return response()->json($authRepository->retorno(new RetornoTipoAuthTokenInvalidTransformer()));
+                return $authRepository->retorno(new RetornoTipoAuthTokenInvalidTransformer());
             } else {
-                return response()->json($authRepository->retorno(new RetornoTipoErroNotAuthorizedTransformer()));
+                return $authRepository->retorno(new RetornoTipoErroNotAuthorizedTransformer());
             }
         }
 
         $erroUnknown = new RetornoTipoErroUnknownTransformer();
         $erroUnknown->setStatus($exception->getCode());
-        return response()->json($authRepository->retorno($erroUnknown));
+        //return $authRepository->retorno($erroUnknown);
 
-        //return parent::render($request, $exception);
+
+        return parent::render($request, $exception);
     }
 }

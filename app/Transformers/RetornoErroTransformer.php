@@ -14,19 +14,24 @@ abstract class  RetornoErroTransformer extends RetornoTransformer
     protected $errors;
     protected $apiVersion;
 
-    public function retorno(RetornoTiposInterface $retornoTipoError):array
+    public function retorno(RetornoTiposInterface $retornoTipoError)
     {
         $retorno = $this->data;
 
-        $retorno[] = [
-            'errors'=>$this->errors
-        ];
+        if($this->errors)
+        {
+            $retorno[] = [
+                'errors' => $this->errors
+            ];
+        }
 
-        return [
+        return response()->json( [
             'data' => $retorno,
             'status' => $retornoTipoError->getStatus(),
+            'success' => false,
             'message' => $retornoTipoError->getMessage(),
-        ];
+            'api-version' => $this->apiVersion,
+        ],$retornoTipoError->getStatus());
     }
 
     public function adicionarErros(ValidacaoParametrosErrosInterface $validacaoParametrosErros):void

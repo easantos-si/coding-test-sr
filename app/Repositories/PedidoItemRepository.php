@@ -57,14 +57,13 @@ class PedidoItemRepository
 
     public function criar(Pedido $pedido, array $listaItemPedidoCadastro):Pedido
     {
-        $pedido->pedidoItem[] = PedidoItem::on($this->dataAuthRepository->database())->create(
+        PedidoItem::on($this->dataAuthRepository->database())->create(
             $this->montarPedidoItem(
                 $pedido,
                 $this->produtoRepository->extrairProdutoItemListaCadastro($listaItemPedidoCadastro),
                 $this->extrairPedidoItemListaCadastro($listaItemPedidoCadastro)
             )
         );
-
         return $pedido;
     }
 
@@ -74,7 +73,6 @@ class PedidoItemRepository
         {
             $this->criar($pedido,  $listaItemPedidoCadastro);
         }
-
         return $pedido;
     }
 
@@ -99,7 +97,7 @@ class PedidoItemRepository
         $this->pedidoItemTransformer->transform(...$pedidos);
     }
 
-    public function retorno(RetornoTiposInterface $retornoTipo):array
+    public function retorno(RetornoTiposInterface $retornoTipo)
     {
         return $this->pedidoItemTransformer->retorno($retornoTipo);
     }

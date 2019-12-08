@@ -17,7 +17,7 @@ class ProdutoController extends Controller
         $produtoRepository->transformers(...
             $produtoRepository->produtos()
         );
-        return $produtoRepository->retorno(new RetornoTipoGetTransformer());
+        return  $produtoRepository->retorno(new RetornoTipoGetTransformer());
     }
 
     public function show(ProdutoRepository $produtoRepository, string $codigo)

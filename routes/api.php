@@ -32,9 +32,9 @@ Route::group([
 ], function()
 {
     Route::apiResource('lojas','LojaController');
-    Route::apiResource('produtos', 'ProdutoController');
-    Route::apiResource('pedidos', 'PedidoController');
-    Route::apiResource('pedido/{pedido}/produtos', 'PedidoItemController');
+    Route::apiResource('produtos', 'ProdutoController')->middleware('protection.v1.produtos');
+    Route::apiResource('pedidos', 'PedidoController')->middleware('protection.v1.pedidos');
+    Route::apiResource('pedido/{pedido}/produtos', 'PedidoItemController')->middleware('protection.v1.pedidos.produtos');
 
 //Implementar no controler no final
 //    Route::post('/v1/compas/pedidos', 'PedidoController@compas');

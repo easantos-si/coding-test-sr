@@ -4,8 +4,14 @@
 namespace App\Transformers;
 
 
+use App\Interfaces\ApiVersionInterface;
+
 class ValidateTranformer extends RetornoErroTransformer
 {
+    protected $data;
+    protected $errors;
+    protected $apiVersion;
+
     public function __construct()
     {
         $this->data = array();
@@ -14,5 +20,10 @@ class ValidateTranformer extends RetornoErroTransformer
     public function transform(array $retorno):void
     {
         $this->setData($retorno);
+    }
+
+    public function setApiVersion(int $apiVersion)
+    {
+        $this->apiVersion = $apiVersion;
     }
 }

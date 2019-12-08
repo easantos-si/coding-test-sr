@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -18,7 +19,6 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
     /**
@@ -41,6 +41,16 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             'bindings',
         ],
+
+        'protection.v1.produtos' => [
+            \App\Http\Middleware\ProdutoProtectionMiddleware::class,
+        ],
+        'protection.v1.pedidos' => [
+            \App\Http\Middleware\PedidoProtectionMiddleware::class,
+        ],
+        'protection.v1.pedidos.produtos' => [
+            \App\Http\Middleware\PedidoItemProtectionMiddleware::class,
+        ]
     ];
 
     /**

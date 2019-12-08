@@ -20,7 +20,7 @@ class AuthRepository
         $this->authTransformer->transform($data);
     }
 
-    public function retorno(RetornoTiposInterface $retornoTipo):array
+    public function retorno(RetornoTiposInterface $retornoTipo)
     {
         return $this->authTransformer->retorno($retornoTipo);
     }
