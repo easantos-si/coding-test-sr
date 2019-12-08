@@ -9,6 +9,7 @@ use App\Interfaces\Transformers\RetornoTiposInterface;
 use App\Models\Pedido;
 use App\Models\PedidoItem;
 use App\Models\Produto;
+use Illuminate\Support\Facades\DB;
 
 class PedidoItemRepository
 {
@@ -57,13 +58,22 @@ class PedidoItemRepository
 
     public function criar(Pedido $pedido, array $listaItemPedidoCadastro):Pedido
     {
-        PedidoItem::on($this->dataAuthRepository->database())->create(
-            $this->montarPedidoItem(
-                $pedido,
-                $this->produtoRepository->extrairProdutoItemListaCadastro($listaItemPedidoCadastro),
-                $this->extrairPedidoItemListaCadastro($listaItemPedidoCadastro)
-            )
-        );
+        try
+        {
+            $itemPedido = PedidoItem::on($this->dataAuthRepository->database())->create(
+                $this->montarPedidoItem(
+                    $pedido,
+                    $this->produtoRepository->extrairProdutoItemListaCadastro($listaItemPedidoCadastro),
+                    $this->extrairPedidoItemListaCadastro($listaItemPedidoCadastro)
+                )
+            );
+
+            $this->produtoRepository->atualizarEstoque($this->produtoRepository->produto($itemPedido->produto), $itemPedido->quantidade);
+        }
+        catch (\Exception $ex)
+        {
+            DB::rollBack();
+        }
         return $pedido;
     }
 
@@ -78,13 +88,47 @@ class PedidoItemRepository
 
     public function atualizar(Pedido $pedido, array $listaItemPedidoCadastro):Pedido
     {
-        $pedido->pedidoItem->first()->update($listaItemPedidoCadastro);
+        $itemPedido = $pedido->pedidoItem->first();
+
+        $quantidadeAnterior = $itemPedido->quantidade;
+
+        try
+        {
+            $itemPedido->update($listaItemPedidoCadastro);
+
+            $this->produtoRepository->atualizarEstoque($this->produtoRepository->produto($itemPedido->produto), ($itemPedido->quantidade - $quantidadeAnterior));
+        }
+        catch (\Exception $ex)
+        {
+            DB::rollBack();
+        }
+
         return $pedido;
     }
     public function deletar(Pedido $pedido):Pedido
     {
-        $pedido->pedidoItem->first()->delete();
+        $itemPedido = $pedido->pedidoItem->first();
+        try
+        {
+            $itemPedido->delete();
+
+            $this->produtoRepository->atualizarEstoque($this->produtoRepository->produto($itemPedido->produto), ($itemPedido->quantidade * -1));
+
+            DB::commit();
+        }
+        catch (\Exception $ex)
+        {
+            DB::rollBack();
+        }
         return $pedido;
+    }
+
+    public function pedidoItemProduto(Pedido $pedido, string $codigoProduto):PedidoItem
+    {
+        return PedidoItem::on($this->dataAuthRepository->database())
+            ->pedidosItemsProduto()
+            ->pedidoItemPedido()
+            ->wherePedidoId($pedido->id)->whereProduto($codigoProduto)->first();
     }
 
     public function transformer(Pedido $pedido):void

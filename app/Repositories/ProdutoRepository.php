@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 use App\Factories\ProdutoTransformerFactory;
 use App\Interfaces\Transformers\RetornoTiposInterface;
+use App\Models\PedidoItem;
 use App\Models\Produto;
 use function foo\func;
 
@@ -50,6 +51,12 @@ class ProdutoRepository
         return $produto;
     }
 
+    public function atualizarEstoque(Produto $produto, $quantidade):Produto
+    {
+        $produto->quantidade_estoque -= $quantidade;
+        $produto->update();
+        return $produto;
+    }
     public function todosProdutosExiste(array $codigoProdutos):bool
     {
         return  (Produto::on($this->dataAuthRepository->database())
@@ -59,12 +66,15 @@ class ProdutoRepository
 
     public function todosProdutosExisteDisponibilidadeEstoque(array $codigoProdutosQuantidades):bool
     {
-        $query = Produto::on($this->dataAuthRepository->database());
-        foreach ($codigoProdutosQuantidades as  $codigoProduto => $quantidade)
-        {
-            $query->orWhere('codigo', '=', $codigoProduto)->where('quantidade_estoque','>','0')->where('quantidade_estoque', '<=',$quantidade);
-        }
-        dd($query->count());
+        dd(
+        Produto::on($this->dataAuthRepository->database())->where(function($query) use ($codigoProdutosQuantidades){
+            foreach ($codigoProdutosQuantidades as  $codigoProduto => $quantidade)
+            {
+                $query->orWhere('codigo', '=', $codigoProduto)->where('quantidade_estoque','>','0')->where('quantidade_estoque', '<=',$quantidade);
+            }
+        })->count()
+
+        );
         return (Produto::on($this->dataAuthRepository->database())
             ->where($codigoProdutosQuantidades)
             ->count() == count($codigoProdutosQuantidades));

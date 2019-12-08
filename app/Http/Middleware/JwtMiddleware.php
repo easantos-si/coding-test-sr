@@ -25,9 +25,12 @@ class JwtMiddleware extends BaseMiddleware
     {
         $authRepository = new AuthRepository(new AuthTransformer());
 
-        try {
+        try
+        {
             $user = JWTAuth::parseToken()->authenticate();
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
                 return response()->json($authRepository->retorno(new RetornoTipoAuthTokenInvalidTransformer()));
             }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){

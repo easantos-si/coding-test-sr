@@ -93,7 +93,7 @@ class CriarLoja extends Command
                 }
 
             }
-            catch (ModelNotFoundException $ex)
+            catch (\Exception $ex)
             {
                 $erro = true;
                 DB::rollBack();
@@ -123,7 +123,7 @@ class CriarLoja extends Command
             config(["database.connections.{$schemaName}" => $baseDados]);
 
         }
-        catch (\mysqli_sql_exception $ex)
+        catch (\Exception $ex)
         {
             $erro = true;
         }

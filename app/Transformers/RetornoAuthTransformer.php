@@ -13,11 +13,12 @@ abstract class RetornoAuthTransformer extends RetornoTransformer
 
     public function retorno(RetornoTiposInterface $retornoTipoAuth)
     {
+        //dd(($retornoTipoAuth->getStatus()));
         return response()->json([
             'data' => $this->data,
             'status' => $retornoTipoAuth->getStatus(),
             'success' => ($retornoTipoAuth->getStatus() == 200),
             'message' => $retornoTipoAuth->getMessage(),
-        ],$retornoTipoAuth->getStatus());
+        ],200);//$retornoTipoAuth->getStatus());
     }
 }

@@ -39,6 +39,12 @@ class PedidoRepository
             ->first();
     }
 
+    public function pedidoItemPedidoProduto(string $codigo, string $produto):Pedido
+    {
+        return Pedido::on($this->dataAuthRepository->database())->whereCodigo($codigo)
+            ->first();
+    }
+
     public function criar(array $parametros):Pedido
     {
         $pedido = null;
@@ -59,14 +65,11 @@ class PedidoRepository
 
             DB::commit();
         }
-        catch (ModelNotFoundException $ex)
+        catch (\Exception $ex)
         {
             DB::rollBack();
         }
-        catch (FatalThrowableError $ex)
-        {
-            DB::rollBack();
-        }
+
         return $pedido;
     }
 
@@ -84,7 +87,7 @@ class PedidoRepository
             }
             DB::commit();
         }
-        catch (ModelNotFoundException $ex)
+        catch (\Exception $ex)
         {
             DB::rollBack();
         }
@@ -100,7 +103,7 @@ class PedidoRepository
             $pedido->delete();
             DB::commit();
         }
-        catch (ModelNotFoundException $ex)
+        catch (\Exception $ex)
         {
             DB::rollBack();
         }

@@ -9,5 +9,5 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 interface PedidoItemToPedidoRelationshipInterface
 {
     public function pedido():HasOne;
-    public function scopePedidos($query);
+    public function scopePedidoItemPedido($query);
 }

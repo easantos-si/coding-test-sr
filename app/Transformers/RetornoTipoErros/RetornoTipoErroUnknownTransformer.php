@@ -8,17 +8,9 @@ use App\Interfaces\Transformers\RetornoTiposInterface;
 
 class RetornoTipoErroUnknownTransformer implements RetornoTiposInterface
 {
-    private $status;
-
-    public  function setStatus(int $status):RetornoTipoErroUnknownTransformer
-    {
-        $this->status = $status;
-        return $this;
-    }
-
     public function getStatus(): int
     {
-        return $this->status;
+        return 500;
     }
 
     public function getMessage(): string

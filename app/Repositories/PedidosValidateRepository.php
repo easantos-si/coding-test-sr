@@ -33,12 +33,12 @@ class PedidosValidateRepository
             $sucesso = false;
             $this->validateTranformer->adicionarErros(new RetornoTipoValidatePedidoContemProdutoInexistenteTransformer());
         }
-//        else
-//            if(!$this->isTodosProdutosTemDisponibilidadeEstoque($parametros))
-//            {
-//                $sucesso = false;
-//                $this->validateTranformer->adicionarErros(new RetornoTipoValidatePedidoExisteProdutoNaoDisponivelEstoqueTransformer());
-//            }
+        else
+            if(!$this->isTodosProdutosTemDisponibilidadeEstoque($parametros))
+            {
+                $sucesso = false;
+                $this->validateTranformer->adicionarErros(new RetornoTipoValidatePedidoExisteProdutoNaoDisponivelEstoqueTransformer());
+            }
 
         return $sucesso;
     }

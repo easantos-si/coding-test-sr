@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Repositories\DataAuthRepository;
-use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use App\Interfaces\Relationships\ProdutoToPedidoItemRelationshipInterface;
 
-class Produto extends Model
+class Produto extends Model implements ProdutoToPedidoItemRelationshipInterface
 {
     protected $fillable = [
         'codigo',
@@ -26,4 +26,14 @@ class Produto extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function pedidoItem():HasMany
+    {
+        return $this->hasMany(PedidoItem::class,'produto_id');
+    }
+
+    public function scopePedidosItens($query)
+    {
+        return $query->with('pedidoItem');
+    }
 }

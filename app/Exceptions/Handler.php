@@ -74,8 +74,10 @@ class Handler extends ExceptionHandler
         if(config('app.debug') == true) {
             $authRepository->transformer(
                 [
+                    'app.debug' => 'true',
                     'error' => $exception->getCode(),
                     'message' => $exception->getMessage(),
+                    'exception' => $exception,
                 ]);
         }
 
@@ -116,11 +118,8 @@ class Handler extends ExceptionHandler
             }
         }
 
-        $erroUnknown = new RetornoTipoErroUnknownTransformer();
-        $erroUnknown->setStatus($exception->getCode());
-        //return $authRepository->retorno($erroUnknown);
+        return $authRepository->retorno(new RetornoTipoErroUnknownTransformer());
 
-
-        return parent::render($request, $exception);
+        //return parent::render($request, $exception);
     }
 }
