@@ -63,7 +63,16 @@ class AuthController extends Controller
 
     public function getAuthenticatedUser(\Tymon\JWTAuth\JWTAuth $auth)
     {
-        return $auth->parseToken()->getPayload()->toArray();
+        //Temporário... apenas para ocultar dados sensiveis da conexão
+        $dados = $auth->parseToken()->getPayload()->toArray();
+
+        return response()->json([
+            'data'=>[
+                    'Loja'=> $dados['loja_nome'],
+                    'Usuário'=> $dados['user_name'],
+                    'Ativo'=> $dados['loja_ativo'],
+                ]
+        ],200);
     }
 
     public function refreshToken()
