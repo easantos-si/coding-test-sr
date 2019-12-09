@@ -8,6 +8,7 @@ use App\Interfaces\ApiVersionInterface;
 use App\Interfaces\Protections\CamposProtection;
 use App\Interfaces\Protections\ValidarCamposProtection;
 use App\Protections\DadosEntradaProtection;
+use App\Transformers\ValidateTranformer;
 
 class PedidoItemProtection extends DadosEntradaProtection implements CamposProtection, ValidarCamposProtection, ApiVersionInterface
 {

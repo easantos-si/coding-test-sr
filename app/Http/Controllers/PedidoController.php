@@ -44,8 +44,13 @@ class PedidoController extends Controller
         return $pedidoRepository->retorno(new RetornoTipoPostTransformer());
     }
 
-    public function update(PedidoRepository $pedidoRepository, string $codigo, Request $request)
+    public function update(PedidoRepository $pedidoRepository, PedidosValidateRepository $pedidosValidateRepository, string $codigo, Request $request)
     {
+        if(!$pedidosValidateRepository->validarPedido($request->all()))
+        {
+            return $pedidosValidateRepository->retorno(new RetornoTipoErroUnprocessableEntityTransformer);
+        }
+
         $pedidoRepository->transformer(
             $pedidoRepository->atualizar(
                 $pedidoRepository->pedido($codigo),

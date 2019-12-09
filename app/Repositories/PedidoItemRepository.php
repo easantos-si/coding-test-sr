@@ -121,9 +121,10 @@ class PedidoItemRepository
         $itemPedido = $this->pedidoItem($codigoPedido, $codigoProduto);
         try
         {
-            $itemPedido->delete();
 
             $this->produtoRepository->atualizarEstoque($this->produtoRepository->produto($itemPedido->produto), ($itemPedido->quantidade * -1));
+
+            $itemPedido->delete();
 
             DB::commit();
         }

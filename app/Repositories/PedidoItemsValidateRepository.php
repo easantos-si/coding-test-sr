@@ -9,33 +9,37 @@ use App\Transformers\RetornoTipoValidate\Pedido\RetornoTipoValidatePedidoContemP
 use App\Transformers\RetornoTipoValidate\Pedido\RetornoTipoValidatePedidoExisteProdutoNaoDisponivelEstoqueTransformer;
 use App\Transformers\ValidateTranformer;
 
-class PedidosValidateRepository
+class PedidoItemsValidateRepository
 {
     private $validateTranformer;
     private $pedidoRepository;
     private $produtoRepository;
+    private $pedidoItemRepository;
 
     public function __construct(ValidateTranformer $validateTranformer ,
                                 PedidoRepository $pedidoRepository,
-                                ProdutoRepository $produtoRepository)
+                                ProdutoRepository $produtoRepository,
+                                PedidoItemRepository $pedidoItemRepository
+    )
     {
         $this->validateTranformer = $validateTranformer;
         $this->pedidoRepository = $pedidoRepository;
         $this->produtoRepository = $produtoRepository;
+        $this->pedidoItemRepository = $pedidoItemRepository;
     }
 
-    public function validarPedido(array $parametros):bool
+    public function validarPedidoItem(array $parametros):bool
     {
         //Não usei return porque a estrutura comporta varias validações
         $sucesso = true;
 
-        if(!$this->isTodosProdutosExiste($parametros))
+        if(!$this->isProdutoExiste($parametros))
         {
             $sucesso = false;
             $this->validateTranformer->adicionarErros(new RetornoTipoValidatePedidoContemProdutoInexistenteTransformer());
         }
         else
-            if(!$this->isTodosProdutosTemDisponibilidadeEstoque($parametros))
+            if(!$this->isProdutoTemDisponibilidadeEstoque($parametros))
             {
                 $sucesso = false;
                 $this->validateTranformer->adicionarErros(new RetornoTipoValidatePedidoExisteProdutoNaoDisponivelEstoqueTransformer());
@@ -44,24 +48,23 @@ class PedidosValidateRepository
         return $sucesso;
     }
 
-    public function isTodosProdutosExiste(array $parametros):bool
+    public function isProdutoExiste(array $parametros):bool
     {
-        return $this->produtoRepository->todosProdutosExiste(
-
-            $this->produtoRepository->extrairCodigoProdutosListaItensPedidoCadastro(
-                $this->pedidoRepository->extrairListaItensPedidoCadastro($parametros)
-
-            )
+        return $this->produtoRepository->todosProdutosExiste([
+                $this->produtoRepository->extrairCodigoProdutoListaItemPedidoCadastro(
+                $parametros
+                        )
+            ]
         );
     }
-    public function isTodosProdutosTemDisponibilidadeEstoque(array $parametros):bool
+    public function isProdutoTemDisponibilidadeEstoque(array $parametros):bool
     {
         return $this->produtoRepository->todosProdutosExisteDisponibilidadeEstoque(
-
-            $this->produtoRepository->extrairCodigoProdutosQuantidadeListaItensPedidoCadastro(
-                $this->pedidoRepository->extrairListaItensPedidoCadastro($parametros)
-
-            )
+            [
+                $this->produtoRepository->extrairCodigoProdutoQuantidadeListaItemPedidoCadastro(
+                    $parametros
+                )
+            ]
         );
     }
 
@@ -74,5 +77,4 @@ class PedidosValidateRepository
     {
         return $this->validateTranformer->retorno($retornoTipoErro);
     }
-
 }

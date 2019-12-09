@@ -98,7 +98,7 @@ class PedidoRepository
     {
         try
         {
-            $deletarItensPeloPedido = new DeletarItensPeloPedidoService($pedido);
+            $deletarItensPeloPedido = new DeletarItensPeloPedidoService($pedido, $this->dataAuthRepository);
             $deletarItensPeloPedido->deletar();
             $pedido->delete();
             DB::commit();

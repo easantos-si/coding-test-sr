@@ -4,6 +4,8 @@
 namespace App\Interfaces\Protections;
 
 
+use phpDocumentor\Reflection\Types\Boolean;
+
 interface CamposProtection
 {
     public function getCamposRequeridos():array;
