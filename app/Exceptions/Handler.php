@@ -118,8 +118,8 @@ class Handler extends ExceptionHandler
             }
         }
 
-        return $authRepository->retorno(new RetornoTipoErroUnknownTransformer());
+        //return $authRepository->retorno(new RetornoTipoErroUnknownTransformer());
 
-        //return parent::render($request, $exception);
+        return parent::render($request, $exception);
     }
 }

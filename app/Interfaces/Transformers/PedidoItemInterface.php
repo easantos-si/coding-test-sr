@@ -4,9 +4,9 @@
 namespace App\Interfaces\Transformers;
 
 
-use App\Models\Pedido;
+use App\Models\PedidoItem;
 
 interface PedidoItemInterface
 {
-    public function transform(Pedido $pedidos):void;
+    public function transform(PedidoItem ...$pedidoItems):void;
 }

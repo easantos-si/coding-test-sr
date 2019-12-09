@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 interface ProdutoToPedidoItemRelationshipInterface
 {
-    public function pedidoItem():HasMany;
-    public function scopePedidosItens($query);
+    public function pedidoItems():HasMany;
+    public function scopePedidoItem($query);
 }

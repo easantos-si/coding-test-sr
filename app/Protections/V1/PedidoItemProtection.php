@@ -14,7 +14,7 @@ class PedidoItemProtection extends DadosEntradaProtection implements CamposProte
     public function getCamposRequeridos(): array
     {
         return [
-            'pedido'=> ['POST'],
+            //'pedido'=> ['POST'],
             'produto'=> ['POST'],
             'quantidade' => ['POST'],
             'preco' => ['POST'],

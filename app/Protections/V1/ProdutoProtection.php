@@ -15,7 +15,7 @@ class ProdutoProtection extends DadosEntradaProtection implements CamposProtecti
     public function getCamposRequeridos(): array
     {
         return [
-            'codigo'=> ['POST', 'PUT','DELETE'],
+            'codigo'=> ['POST'],
             'nome' => ['POST'],
             //'descricao' => ['POST'],
             'quantidade_estoque' => ['POST'],

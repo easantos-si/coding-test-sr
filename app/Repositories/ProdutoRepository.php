@@ -66,32 +66,12 @@ class ProdutoRepository
 
     public function todosProdutosExisteDisponibilidadeEstoque(array $codigoProdutosQuantidades):bool
     {
-        dd(
-        Produto::on($this->dataAuthRepository->database())->where(function($query) use ($codigoProdutosQuantidades){
-            foreach ($codigoProdutosQuantidades as  $codigoProduto => $quantidade)
-            {
-                $query->orWhere('codigo', '=', $codigoProduto)->where('quantidade_estoque','>','0')->where('quantidade_estoque', '<=',$quantidade);
+        return Produto::on($this->dataAuthRepository->database())->where(function($query) use ($codigoProdutosQuantidades){
+            foreach ($codigoProdutosQuantidades as  $produtos)
+            {//dd($produtos);
+                $query->orWhere('codigo', '=', $produtos['codigo'])->where('quantidade_estoque','>','0')->whereRaw("(quantidade_estoque - {$produtos['quantidade']}) >= 0");
             }
-        })->count()
-
-        );
-        return (Produto::on($this->dataAuthRepository->database())
-            ->where($codigoProdutosQuantidades)
-            ->count() == count($codigoProdutosQuantidades));
-
-
-        //$codigoProcutos = array_keys($codigoProdutosQuantidades);
-
-
-//
-//        return (Produto::on($this->dataAuthRepository->database())
-//                ->whereIn('codigo',$codigoProcutos)
-//            ->where(function($query) use ($codigoProdutosQuantidades){
-//                foreach ($codigoProdutosQuantidades as  $codigoProduto => $quantidade)
-//                {
-//                    $query->where('codigo',$codigoProduto)->where('quantidade',$quantidade);
-//                }
-//            })->count() == count($codigoProcutos));
+        })->count() == count($codigoProdutosQuantidades);
     }
 
     public function extrairProdutoItemListaCadastro(array $listaItemPedidoCadastro):Produto
@@ -107,7 +87,8 @@ class ProdutoRepository
     public function extrairCodigoProdutoQuantidadeListaItemPedidoCadastro(array $listaItemPedidoCadastro):array
     {
         return [
-                    $listaItemPedidoCadastro['produto'] =>  $listaItemPedidoCadastro['quantidade']
+            'codigo' => $listaItemPedidoCadastro['produto'],
+            'quantidade' =>  $listaItemPedidoCadastro['quantidade']
         ];
     }
 

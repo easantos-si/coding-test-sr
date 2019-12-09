@@ -5,7 +5,7 @@ namespace App\Transformers\V1;
 
 
 use App\Interfaces\Transformers\PedidoItemInterface;
-use App\Models\Pedido;
+use App\Models\PedidoItem;
 use App\Transformers\RetornoTransformer;
 
 class PedidoItemTransformer extends RetornoTransformer implements PedidoItemInterface
@@ -15,14 +15,14 @@ class PedidoItemTransformer extends RetornoTransformer implements PedidoItemInte
         $this->apiVersion = 1;
     }
 
-    public function transform(Pedido $pedido):void
+    public function transform(PedidoItem ...$pedidoItems):void
     {
         $retorno = array();
 
-        foreach ($pedido->pedidoItem as $pedidoItem)
+        foreach ($pedidoItems as $pedidoItem)
         {
             $retorno[] = [
-                'pedido' => $pedido->codigo,
+                'pedido' => $pedidoItem->pedidos->codigo,
                 'produto' => $pedidoItem->produto,
                 'quantidade' => $pedidoItem->quantidade,
                 'preco' => $pedidoItem->preco,

@@ -27,13 +27,13 @@ class Produto extends Model implements ProdutoToPedidoItemRelationshipInterface
         'updated_at',
     ];
 
-    public function pedidoItem():HasMany
+    public function pedidoItems():HasMany
     {
         return $this->hasMany(PedidoItem::class,'produto_id');
     }
 
-    public function scopePedidosItens($query)
+    public function scopePedidoItem($query)
     {
-        return $query->with('pedidoItem');
+        return $query->with('pedidoItems');
     }
 }

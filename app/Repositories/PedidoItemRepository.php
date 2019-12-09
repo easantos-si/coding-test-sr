@@ -46,17 +46,26 @@ class PedidoItemRepository
         );
     }
 
-    public function pedidoItens(Pedido $pedido):Pedido
+    public function pedidoItens(string $codigoPedido):iterable
     {
-        return $pedido->pedidoProdutos()->get()->first();
+        return PedidoItem::on($this->dataAuthRepository->database())
+            ->pedidoItemPedido()
+            ->pedidoItemPedidoCodigoPedido($codigoPedido)
+            ->get()
+            ->flatten(1)
+            ->values()
+            ->all();
     }
 
-    public function pedidoItem(Pedido $pedido, string $codigoProduto):Pedido
+    public function pedidoItem(string $codigoPedido, string $codigoProduto):PedidoItem
     {
-        return $pedido->pedidoProduto($codigoProduto)->get()->first();
+        return PedidoItem::on($this->dataAuthRepository->database())
+            ->pedidoItemPedido()
+            ->pedidoItemPedidoCodigoPedido($codigoPedido)
+            ->first();
     }
 
-    public function criar(Pedido $pedido, array $listaItemPedidoCadastro):Pedido
+    public function criar(Pedido $pedido, array $listaItemPedidoCadastro):PedidoItem
     {
         try
         {
@@ -68,13 +77,15 @@ class PedidoItemRepository
                 )
             );
 
-            $this->produtoRepository->atualizarEstoque($this->produtoRepository->produto($itemPedido->produto), $itemPedido->quantidade);
+            $itemPedido->load('pedidos','produtos');
+            $this->produtoRepository->atualizarEstoque($itemPedido->produtos, $itemPedido->quantidade);
         }
         catch (\Exception $ex)
         {
             DB::rollBack();
+            $itemPedido = null;
         }
-        return $pedido;
+        return $itemPedido;
     }
 
     public function criarPeloPedido(Pedido $pedido, array $listaItensPedidoCadastro):Pedido
@@ -86,9 +97,9 @@ class PedidoItemRepository
         return $pedido;
     }
 
-    public function atualizar(Pedido $pedido, array $listaItemPedidoCadastro):Pedido
+    public function atualizar(string $codigoPedido, string $codigoProduto, array $listaItemPedidoCadastro):PedidoItem
     {
-        $itemPedido = $pedido->pedidoItem->first();
+        $itemPedido = $this->pedidoItem($codigoPedido, $codigoProduto);
 
         $quantidadeAnterior = $itemPedido->quantidade;
 
@@ -103,11 +114,11 @@ class PedidoItemRepository
             DB::rollBack();
         }
 
-        return $pedido;
+        return $itemPedido;
     }
-    public function deletar(Pedido $pedido):Pedido
+    public function deletar(string $codigoPedido, string $codigoProduto):PedidoItem
     {
-        $itemPedido = $pedido->pedidoItem->first();
+        $itemPedido = $this->pedidoItem($codigoPedido, $codigoProduto);
         try
         {
             $itemPedido->delete();
@@ -120,7 +131,7 @@ class PedidoItemRepository
         {
             DB::rollBack();
         }
-        return $pedido;
+        return $itemPedido;
     }
 
     public function pedidoItemProduto(Pedido $pedido, string $codigoProduto):PedidoItem
@@ -131,14 +142,14 @@ class PedidoItemRepository
             ->wherePedidoId($pedido->id)->whereProduto($codigoProduto)->first();
     }
 
-    public function transformer(Pedido $pedido):void
+    public function transformer(PedidoItem $pedidoItem):void
     {
-        $this->pedidoItemTransformer->transform($pedido);
+        $this->pedidoItemTransformer->transform($pedidoItem);
     }
 
-    public function transformers(Pedido... $pedidos):void
+    public function transformers(PedidoItem... $pedidoItem):void
     {
-        $this->pedidoItemTransformer->transform(...$pedidos);
+        $this->pedidoItemTransformer->transform(...$pedidoItem);
     }
 
     public function retorno(RetornoTiposInterface $retornoTipo)

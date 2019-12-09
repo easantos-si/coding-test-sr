@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Interfaces\Relationships\PedidoToPedidoItemRelationshipInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Pedido extends Model implements PedidoToPedidoItemRelationshipInterface
 {
@@ -22,19 +22,19 @@ class Pedido extends Model implements PedidoToPedidoItemRelationshipInterface
         'data_compra',
     ];
 
-    public function pedidoItem():HasMany
+    public function pedidoItems():HasOne
     {
-        return $this->hasMany(PedidoItem::class,'pedido_id');
+        return $this->hasOne(PedidoItem::class);
     }
 
-    public function scopePedidoProdutos($query)
+    public function scopePedidoItem($query)
     {
-        return $query->with('pedidoItem');
+        return $query->with('pedidoItems');
     }
 
-    public function scopePedidoProduto($query, string $codigoProduto)
+    public function scopePedidoItemsProdutos($query, string $codigoProduto)
     {
-        $query->with(['pedidoItem' =>function($query) use($codigoProduto){
+        $query->with(['pedidoItems' =>function($query) use($codigoProduto){
             $query->where('produto', '=', $codigoProduto);
         }]);
     }

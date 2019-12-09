@@ -4,10 +4,10 @@
 namespace App\Interfaces\Relationships;
 
 
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 interface PedidoItemToPedidoRelationshipInterface
 {
-    public function pedido():HasOne;
+    public function pedidos():BelongsTo;
     public function scopePedidoItemPedido($query);
 }

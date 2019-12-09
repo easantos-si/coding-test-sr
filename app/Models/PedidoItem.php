@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Interfaces\Relationships\PedidoItemToPedidoRelationshipInterface;
 use App\Interfaces\Relationships\PedidoItemToProdutoRelationshipInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PedidoItem extends Model implements PedidoItemToPedidoRelationshipInterface, PedidoItemToProdutoRelationshipInterface
 {
@@ -23,23 +23,37 @@ class PedidoItem extends Model implements PedidoItemToPedidoRelationshipInterfac
     ];
     protected $connection;
 
-    public function pedido():HasOne
+    public function pedidos():BelongsTo
     {
-        return $this->hasOne(Pedido::class,'id' ,'pedido_id');
+        return $this->BelongsTo(Pedido::class, 'pedido_id');
     }
 
     public function scopePedidoItemPedido($query)
     {
-        return $query->with('pedido');
+        return $query->with('pedidos');
     }
 
-    public function produto():HasOne
+    public function scopePedidoItemPedidoCodigoPedido($query, string $codigoPedido)
     {
-        return $this->hasOne(Produto::class,'id', 'produto_id');
+        $query->whereHas('pedidos', function($query) use($codigoPedido){
+            $query->where('codigo', '=', $codigoPedido);
+        });
+    }
+
+    public function produtos():BelongsTo
+    {
+        return $this->belongsTo(Produto::class,'produto_id');
     }
 
     public function scopePedidosItemsProduto($query)
     {
-        return $query->with('produto');
+        return $query->with('produtos');
+    }
+
+    public function scopePedidosItemsProdutoCodigoProduto($query, string $codigoProduto)
+    {
+        $query->with(['produtos' =>function($query) use($codigoProduto){
+            $query->where('codigo', '=', $codigoProduto);
+        }]);
     }
 }
