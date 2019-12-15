@@ -5,9 +5,7 @@ namespace App\Repositories;
 
 use App\Factories\ProdutoTransformerFactory;
 use App\Interfaces\Transformers\RetornoTiposInterface;
-use App\Models\PedidoItem;
 use App\Models\Produto;
-use function foo\func;
 
 class ProdutoRepository
 {

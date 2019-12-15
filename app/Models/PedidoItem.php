@@ -7,6 +7,28 @@ use App\Interfaces\Relationships\PedidoItemToProdutoRelationshipInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * App\Models\PedidoItem
+ *
+ * @property int $id
+ * @property int $pedido_id
+ * @property int $produto_id
+ * @property string $produto
+ * @property int $quantidade
+ * @property float $preco
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Pedido $pedidos
+ * @property-read \App\Models\Produto $produtos
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PedidoItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PedidoItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PedidoItem pedidoItemPedido()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PedidoItem pedidoItemPedidoCodigoPedido($codigoPedido)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PedidoItem pedidosItemsProduto()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PedidoItem pedidosItemsProdutoCodigoProduto($codigoProduto)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PedidoItem query()
+ * @mixin \Eloquent
+ */
 class PedidoItem extends Model implements PedidoItemToPedidoRelationshipInterface, PedidoItemToProdutoRelationshipInterface
 {
     protected $fillable = [
